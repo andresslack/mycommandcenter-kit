@@ -1,0 +1,426 @@
+{
+  "_notes": "Structure only. No tasks, no panel items with content, no links. The rail heading is \"To-do's\" (rail_heading, top level). Panels seed blank except the Administrative starter checklist in the small-business pack (titles only). Routine entries listed here are created in the recurring panel at install, each with its entry type (ROUTINE-CATALOG.md); weekly-check entries carry weekday null until the user picks a due weekday in the interview. The Email Brief entry (type brief) is created by prompts/03-email-brief-setup.md and the reviews entry (type sessions) by prompts/05-reviews-and-file-log-setup.md, not here.",
+  "packs": {
+    "consultant": {
+      "label": "Consultant / Client Work",
+      "panels": [
+        {
+          "kind": "routine",
+          "position": 1,
+          "slot": "recurring",
+          "system": true,
+          "title_from": "recurring_panel_name"
+        },
+        {
+          "kind": "standard",
+          "position": 2,
+          "system": true,
+          "title": "Recent File Saves"
+        },
+        {
+          "kind": "links",
+          "position": 3,
+          "system": true,
+          "title": "Quick Open"
+        },
+        {
+          "kind": "standard",
+          "position": 4,
+          "system": false,
+          "title": "Administrative"
+        },
+        {
+          "kind": "standard",
+          "position": 5,
+          "system": false,
+          "title": "Parking Lot"
+        },
+        {
+          "kind": "standard",
+          "position": 6,
+          "system": false,
+          "title": "Projects"
+        },
+        {
+          "kind": "standard",
+          "position": 7,
+          "system": false,
+          "title": "Clients and Engagements"
+        },
+        {
+          "kind": "standard",
+          "position": 8,
+          "system": false,
+          "title": "Meetings and Follow-ups"
+        },
+        {
+          "kind": "standard",
+          "position": 9,
+          "system": false,
+          "title": "Team and People"
+        },
+        {
+          "kind": "standard",
+          "position": 10,
+          "system": false,
+          "title": "Vendors and Partners"
+        },
+        {
+          "kind": "standard",
+          "position": 11,
+          "system": false,
+          "title": "Pipeline and Proposals"
+        },
+        {
+          "kind": "standard",
+          "position": 12,
+          "system": false,
+          "title": "Operations"
+        },
+        {
+          "kind": "standard",
+          "position": 13,
+          "system": false,
+          "title": "Learning"
+        },
+        {
+          "kind": "standard",
+          "position": 14,
+          "system": false,
+          "title": "Personal & Family"
+        },
+        {
+          "kind": "standard",
+          "position": 15,
+          "system": false,
+          "title": "Ideas and Someday"
+        }
+      ],
+      "recurring_panel_name": "Recurring Activities",
+      "routines": [
+        {
+          "cycle": "daily",
+          "detail": "Open the board, look at the Priority Rail, pick the day's top items.",
+          "title": "Daily board review",
+          "type": "daily-check"
+        },
+        {
+          "config": {
+            "_weekday_note": "Due weekday picked by the user in the interview; null means not yet picked.",
+            "weekday": null
+          },
+          "cycle": "weekly",
+          "detail": "Move every Parking Lot item to a permanent panel, convert it to a task, or delete it.",
+          "title": "Empty the Parking Lot",
+          "type": "weekly-check"
+        },
+        {
+          "config": {
+            "_weekday_note": "Due weekday picked by the user in the interview; null means not yet picked.",
+            "weekday": null
+          },
+          "cycle": "weekly",
+          "detail": "Wins, stalls, next week focus. Saved to the board's weekly audit.",
+          "title": "Weekly audit",
+          "type": "weekly-check"
+        },
+        {
+          "config": {
+            "weekday": null
+          },
+          "cycle": "weekly",
+          "detail": "Which clients are waiting on something from me.",
+          "title": "Client follow-up review",
+          "type": "weekly-check"
+        }
+      ]
+    },
+    "small-business": {
+      "administrative_starter_items": [
+        {
+          "title": "Monthly money review"
+        },
+        {
+          "title": "Payroll check"
+        },
+        {
+          "title": "Tax paperwork"
+        },
+        {
+          "title": "Insurance and licences"
+        },
+        {
+          "title": "Bills to pay"
+        }
+      ],
+      "label": "Small Business Operator",
+      "panels": [
+        {
+          "kind": "routine",
+          "position": 1,
+          "slot": "recurring",
+          "system": true,
+          "title_from": "recurring_panel_name"
+        },
+        {
+          "kind": "standard",
+          "position": 2,
+          "system": true,
+          "title": "Recent File Saves"
+        },
+        {
+          "kind": "links",
+          "position": 3,
+          "system": true,
+          "title": "Quick Open"
+        },
+        {
+          "kind": "standard",
+          "position": 4,
+          "system": false,
+          "title": "Administrative"
+        },
+        {
+          "kind": "standard",
+          "position": 5,
+          "system": false,
+          "title": "Parking Lot"
+        },
+        {
+          "kind": "standard",
+          "position": 6,
+          "system": false,
+          "title": "Projects"
+        },
+        {
+          "kind": "standard",
+          "position": 7,
+          "system": false,
+          "title": "Clients and Customers"
+        },
+        {
+          "kind": "standard",
+          "position": 8,
+          "system": false,
+          "title": "Meetings and Follow-ups"
+        },
+        {
+          "kind": "standard",
+          "position": 9,
+          "system": false,
+          "title": "Team and People"
+        },
+        {
+          "kind": "standard",
+          "position": 10,
+          "system": false,
+          "title": "Vendors and Partners"
+        },
+        {
+          "kind": "standard",
+          "position": 11,
+          "system": false,
+          "title": "Marketing and Sales"
+        },
+        {
+          "kind": "standard",
+          "position": 12,
+          "system": false,
+          "title": "Operations"
+        },
+        {
+          "kind": "standard",
+          "position": 13,
+          "system": false,
+          "title": "Learning"
+        },
+        {
+          "kind": "standard",
+          "position": 14,
+          "system": false,
+          "title": "Personal & Family"
+        },
+        {
+          "kind": "standard",
+          "position": 15,
+          "system": false,
+          "title": "Ideas and Someday"
+        }
+      ],
+      "recurring_panel_name": "Operating Rhythm",
+      "routines": [
+        {
+          "cycle": "daily",
+          "detail": "Open the board, look at the Priority Rail, pick the day's top items.",
+          "title": "Daily board review",
+          "type": "daily-check"
+        },
+        {
+          "config": {
+            "_weekday_note": "Due weekday picked by the user in the interview; null means not yet picked.",
+            "weekday": null
+          },
+          "cycle": "weekly",
+          "detail": "Move every Parking Lot item to a permanent panel, convert it to a task, or delete it.",
+          "title": "Empty the Parking Lot",
+          "type": "weekly-check"
+        },
+        {
+          "config": {
+            "_weekday_note": "Due weekday picked by the user in the interview; null means not yet picked.",
+            "weekday": null
+          },
+          "cycle": "weekly",
+          "detail": "Wins, stalls, next week focus. Saved to the board's weekly audit.",
+          "title": "Weekly audit",
+          "type": "weekly-check"
+        },
+        {
+          "config": {
+            "weekday": null
+          },
+          "cycle": "weekly",
+          "detail": "Cash position, bills due this week, invoices waiting.",
+          "title": "Weekly money check",
+          "type": "weekly-check"
+        },
+        {
+          "config": {
+            "weekday": null
+          },
+          "cycle": "weekly",
+          "detail": "Which customers are waiting on something from us.",
+          "title": "Customer follow-up review",
+          "type": "weekly-check"
+        }
+      ]
+    },
+    "solo": {
+      "label": "Solo / Very Busy Individual",
+      "panels": [
+        {
+          "kind": "routine",
+          "position": 1,
+          "slot": "recurring",
+          "system": true,
+          "title_from": "recurring_panel_name"
+        },
+        {
+          "kind": "standard",
+          "position": 2,
+          "system": true,
+          "title": "Recent File Saves"
+        },
+        {
+          "kind": "links",
+          "position": 3,
+          "system": true,
+          "title": "Quick Open"
+        },
+        {
+          "kind": "standard",
+          "position": 4,
+          "system": false,
+          "title": "Administrative"
+        },
+        {
+          "kind": "standard",
+          "position": 5,
+          "system": false,
+          "title": "Parking Lot"
+        },
+        {
+          "kind": "standard",
+          "position": 6,
+          "system": false,
+          "title": "Personal & Family"
+        },
+        {
+          "kind": "standard",
+          "position": 7,
+          "system": false,
+          "title": "Projects"
+        },
+        {
+          "kind": "standard",
+          "position": 8,
+          "system": false,
+          "title": "Clients and Customers"
+        },
+        {
+          "kind": "standard",
+          "position": 9,
+          "system": false,
+          "title": "Meetings and Follow-ups"
+        },
+        {
+          "kind": "standard",
+          "position": 10,
+          "system": false,
+          "title": "Team and People"
+        },
+        {
+          "kind": "standard",
+          "position": 11,
+          "system": false,
+          "title": "Vendors and Partners"
+        },
+        {
+          "kind": "standard",
+          "position": 12,
+          "system": false,
+          "title": "Marketing and Sales"
+        },
+        {
+          "kind": "standard",
+          "position": 13,
+          "system": false,
+          "title": "Operations"
+        },
+        {
+          "kind": "standard",
+          "position": 14,
+          "system": false,
+          "title": "Learning"
+        },
+        {
+          "kind": "standard",
+          "position": 15,
+          "system": false,
+          "title": "Ideas and Someday"
+        }
+      ],
+      "recurring_panel_name": "Recurring Activities",
+      "routines": [
+        {
+          "cycle": "daily",
+          "detail": "Open the board, look at the Priority Rail, pick the day's top items.",
+          "title": "Daily board review",
+          "type": "daily-check"
+        },
+        {
+          "config": {
+            "_weekday_note": "Due weekday picked by the user in the interview; null means not yet picked.",
+            "weekday": null
+          },
+          "cycle": "weekly",
+          "detail": "Move every Parking Lot item to a permanent panel, convert it to a task, or delete it.",
+          "title": "Empty the Parking Lot",
+          "type": "weekly-check"
+        },
+        {
+          "config": {
+            "_weekday_note": "Due weekday picked by the user in the interview; null means not yet picked.",
+            "weekday": null
+          },
+          "cycle": "weekly",
+          "detail": "Wins, stalls, next week focus. Saved to the board's weekly audit.",
+          "title": "Weekly audit",
+          "type": "weekly-check"
+        }
+      ]
+    }
+  },
+  "rail_heading": "To-do's",
+  "version": "0.1.5"
+}

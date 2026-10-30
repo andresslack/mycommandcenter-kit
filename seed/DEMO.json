@@ -1,0 +1,37 @@
+{
+  "_notes": "OPTIONAL demo data. Load only if the user explicitly asks to see a populated board. Every title is fictional and generic. Loading demo data must be a single, clearly labelled action, and deleting it must be a single action too (delete exactly the items listed here, with the user's confirmation). Never mix demo data with the user's real data silently.",
+  "items": [
+    {
+      "panel": "Projects",
+      "title": "Website refresh"
+    },
+    {
+      "detail": "Placement unclear on purpose, this is what Parking Lot is for.",
+      "notes": "Source: demo data. Suggested panel: Operations.",
+      "panel": "Parking Lot",
+      "title": "Renew the office printer contract"
+    }
+  ],
+  "links": [
+    {
+      "destination": "https://example.com",
+      "label": "Example link (demo)"
+    }
+  ],
+  "tasks": [
+    {
+      "detail": "Demo task. Delete it whenever you like.",
+      "title": "Book the team lunch"
+    },
+    {
+      "due_date": null,
+      "estimate": "30m",
+      "title": "Call the accountant"
+    },
+    {
+      "detail": "Demo task with a due date.",
+      "title": "Prepare Monday's agenda"
+    }
+  ],
+  "version": "0.1.5"
+}
