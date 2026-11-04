@@ -1,0 +1,107 @@
+{
+  "_readme": "File Save Log exclusion defaults. SHIPPED WITH THE KIT AND REPLACED ON EVERY KIT UPDATE: do not put personal rules here, they will be overwritten. Put personal rules in FileSaveLog-Excludes.user.json (same schema), which updates never touch. Matching is case-insensitive throughout. extensions: file name ends with the entry (entries starting with a dot match the extension; entries like -wal match the name suffix). fileNames: name patterns, * and ? wildcards allowed. folderSegments: a single path segment anywhere in the path. segmentPairs: [parent, child], the child folder directly under the parent folder. selfPaths: absolute folders that must never be logged (the scanner's own install, batch, state and ingest folders); the installer fills these in the USER file, never here. optional: candidate rule groups shipped DISABLED; enable one by listing its key in the user file's enableOptional array. settings: panelSize (saves shown in the Recent File Saves panel) and retentionMonths (months kept in the master log) are user preferences, not kit constants; the user file may override either. Lowering retentionMonths shortens the kept window, so the aggregator's next run archives and removes entries older than the new window.",
+  "version": 1,
+  "extensions": [
+    ".tmp",
+    ".temp",
+    ".crdownload",
+    ".partial",
+    ".part",
+    ".log",
+    ".swp",
+    ".swo",
+    ".pyc",
+    ".etl",
+    ".asd",
+    ".wbk",
+    ".lock",
+    "-wal",
+    "-shm",
+    "-journal",
+    ".tsbuildinfo"
+  ],
+  "fileNames": [
+    "desktop.ini",
+    "Thumbs.db",
+    ".DS_Store",
+    "~$*",
+    "~WRL*.tmp",
+    ".~lock.*#",
+    "next-env.d.ts"
+  ],
+  "folderSegments": [
+    ".git",
+    "node_modules",
+    "__pycache__",
+    ".venv",
+    "venv",
+    ".cache",
+    ".vs",
+    ".idea",
+    ".vscode",
+    "$RECYCLE.BIN",
+    "System Volume Information",
+    ".Trash",
+    ".tmp.driveupload",
+    ".tmp.drivedownload"
+  ],
+  "segmentPairs": [],
+  "selfPaths": [],
+  "optional": {
+    "bakFiles": {
+      "description": "Editor and application backup files (.bak). Off by default because some users treat .bak files as deliberate work copies.",
+      "extensions": [
+        ".bak"
+      ]
+    },
+    "buildFolders": {
+      "description": "Build output folders (dist, build, bin, obj). Off by default because some users save deliverables into a build or bin folder by hand.",
+      "folderSegments": [
+        "dist",
+        "build",
+        "bin",
+        "obj"
+      ]
+    },
+    "snagx": {
+      "description": "Snagit screen-capture working files (.snagx). The PNG or JPG exported from a capture still logs normally.",
+      "extensions": [
+        ".snagx"
+      ]
+    },
+    "screenshotFolders": {
+      "description": "Screen capture folders and files: files in a folder named Screenshots, files whose name starts with Screenshot, and Snagit's capture folder segment.",
+      "fileNames": [
+        "Screenshot*"
+      ],
+      "folderSegments": [
+        "Screenshots",
+        "Snagit"
+      ]
+    },
+    "generatedOutputExample": {
+      "description": "EXAMPLE ONLY, with placeholder names: a segment pair for your own tool's generated-output folder. Copy the pair into your user file's segmentPairs with your real folder names; enabling this group as shipped does nothing useful.",
+      "segmentPairs": [
+        [
+          "my-tool",
+          "output"
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "panelSize": 40,
+    "retentionMonths": 12
+  },
+  "panelOnly": {
+    "_readme": "Panel-only rules: matching files stay in the master log and the CSV but never appear on the Recent File Saves panel. Same rule types as the top level, plus pathPrefixes (absolute path prefixes, case-insensitive). The scanner ignores this block; only the aggregator and the panel apply it.",
+    "extensions": [],
+    "fileNames": [],
+    "folderSegments": [
+      "Temp",
+      "tmp"
+    ],
+    "segmentPairs": [],
+    "pathPrefixes": []
+  }
+}

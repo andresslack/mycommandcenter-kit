@@ -38,6 +38,12 @@ On a schedule the user sets, read the user's connected inboxes and produce a sho
 
 Applied before the sections: newsletters, routine automated alerts, and generic template recruiter messages (first contact, no named employer, role, or project, formulaic praise) are screened out. If the screened count is greater than zero, add one tally line at the end: "Screened: N routine message(s)." Never screen mail from a named person in an existing conversation thread; if unsure, include it in FYI.
 
+### 3.3 No carry-overs (binding on every brief writer)
+
+- Each run reports only messages received in its own window that have not already been reported in an earlier brief.
+- Never repeat an item because it is still open or because its deadline is near, and never label anything "(carried over)".
+- A new message about a known item is new mail: report it on its own, in the run where it arrived.
+
 ## 4. Suggestion metadata (the TODOSUGGEST channel)
 
 At the end of the board and file versions of each brief, never in the chat-delivered brief, the brief writer appends one invisible HTML comment:
@@ -71,10 +77,11 @@ Rules for the writer:
 - Beside "Add to To-do's", a quiet "Open" pill appears when the bullet's metadata carries open_url. It opens the source email at its mailbox web interface in a new tab (target=_blank, rel="noopener noreferrer"), and it stays available after the item has been added. Opening is read-only.
 - Writer side: add open_url for every bullet that corresponds to a specific message, built from the message's own identifiers:
   - Gmail: https://mail.google.com/mail/?authuser=<mailbox address>#inbox/<message id> (use #spam/<id> when the message was found in Spam)
-  - Microsoft 365: https://outlook.office.com/mail/inbox/id/<URL-encoded message id> (use /mail/junkemail/id/ for Junk)
-  - Personal Outlook: https://outlook.live.com/mail/0/inbox/id/<URL-encoded message id> (use /mail/0/junkemail/id/ for Junk)
+  - Microsoft 365: use the message's webLink value verbatim when the mail API provides one. Otherwise: https://outlook.office365.com/owa/?ItemID=<converted message id>&exvsurl=1&viewmodel=ReadMessageItem (works from any folder, including Junk)
+  - Personal Outlook: https://outlook.live.com/mail/deeplink/read/<converted message id>?ItemID=<same converted id>&exvsurl=1 (works from any folder, including Junk)
+  - Outlook message id conversion (applies to both Outlook patterns above): in the raw message id, replace every _ with + and every - with /, then URL-encode the result (+ becomes %2B, / becomes %2F, = becomes %3D). Skipping the conversion produces links that do not open the message.
   - If an exact deep link cannot be formed from the identifiers actually available, omit open_url rather than guessing. The button simply does not appear.
-- Board side validation: render the Open button only for https URLs on these three hosts: mail.google.com, outlook.office.com, outlook.live.com. Any other value renders no button, and the value is never rendered as a link anywhere else.
+- Board side validation: render the Open button only for https URLs on these hosts: mail.google.com, outlook.office365.com, outlook.office.com, outlook.live.com. Any other value renders no button, and the value is never rendered as a link anywhere else.
 
 ## 7. Where the brief goes
 
