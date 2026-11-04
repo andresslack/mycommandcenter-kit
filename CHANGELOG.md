@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.2.0 (pilot) - 2026-11-04
+
+- Install and upgrade prompts aligned with the config-driven File Save Log: the install creates the user's personal excludes file from the shipped template and fills selfPaths, and the upgrade path replaces the scanner and the shipped defaults while preserving the user file, scanner state, and logs.
+
+- Recent File Saves rows gained a Copy path action (works with no handler); the link test treats a row as eligible when its path is a real local path (Windows drive, UNC, or macOS), and the rules dialog states that Copy path works for every row while click-to-open needs a handler. The neutral-named click-to-open handler is planned for v1.1, not built. Explain wording: users can ask Muse "why isn't <path> shown?" or run explain.py themselves if they have Python 3.
+
+- File Save Log exclusions are now config-driven: a new `filesave-log` folder carries the shipped defaults (FileSaveLog-Excludes.json, with optional rule groups that ship disabled), a user-file template the installer turns into FileSaveLog-Excludes.user.json (never overwritten by updates), and a scanner that reads both files with a built-in minimal fallback and a logged warning when a config file is missing or invalid. The aggregator reads the same two files, so scanner and backstop cannot drift apart. Two aggregator numbers are now settings in the same files (panelSize, default 40; retentionMonths, default 12), overridable per user with validated fallbacks. Spec: FILE-SAVE-LOG.md Section 3b.
+- File Save Log panel rules restructured: panel-only patterns moved from code into a `panelOnly` block in the same config files (with path prefixes); next-env.d.ts and .tsbuildinfo became complete exclusions; the panel now applies a link test instead of a Windows-only rule and shows an "N hidden (no link)" footer; panel delete split into Dismiss (one save) and Hide this file always (path mute) with a restorable Hidden items list, and earlier permanent hides migrate to Hide-always; the panel receives all panel-eligible rows and gains a persistent extension filter and a Show x control. Spec: FILE-SAVE-LOG.md Sections 3b, 3c, 4, and 4c.
+
+- Corrected the Outlook deep-link forms in spec/EMAIL-BRIEF.md (Microsoft 365 and Personal Outlook), added the message-ID conversion step, added the no-carry-over rule (section 3.3), and updated the self-check in prompts/self-check-and-repair.md to name all four allowed webmail hosts.
+
+- Scanner now stops with a clear error and leaves state untouched when config.json is malformed or has no roots.
+
 ## 0.1.5 (pilot)
 
 The kit now carries its real license, which was the last piece missing before a public release.

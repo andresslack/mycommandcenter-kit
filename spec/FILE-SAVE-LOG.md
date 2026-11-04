@@ -18,7 +18,7 @@ a) Scanner, on the user's computer: a small script, set up with the user's expli
 b) Aggregator, a scheduled job in the user's Muse every 15 minutes, which:
 1. Reads new scanner log entries since the last run (keep a watermark; never re-read the whole history).
 2. Detects panel deletions since the last run and records them as hides (section 4), before building the new panel list.
-3. Applies exclusions (section 3) and hides, in that order, before taking the top 40.
+3. Applies exclusions (section 3) and hides, in that order, before taking the top panelSize entries (the panel-size setting, default 40).
 4. Syncs the Recent File Saves panel to the result: add new entries, remove entries that rolled off or were hidden, change nothing else on the board.
 5. Appends everything (including excluded entries) to the master log, and refreshes the full-log file in the location the user chose (their Drive, or a local file).
 6. Records the panel state seen at the end of the cycle, for the next cycle's deletion detection.
@@ -46,38 +46,71 @@ The scanner runs every 15 minutes on a machine the user is actively working at. 
 - Never fix window visibility by switching the task to "run whether the user is logged on or not". That runs outside the user's desktop session, where mapped cloud drives (for example a Drive letter for cloud storage, or a synced OneDrive) may not be mounted, so scanner output can silently stop landing where the aggregator reads it. An invisible failure is worse than a visible window.
 - Verification: windowless counts as working only when the user confirms a scheduled cycle ran with no window seen at all. Do not claim it from the task settings alone (same honesty rule as section 5: verify from the cycle, not from configuration).
 
-## 3. Exclusions (panel only; excluded entries still go to the master log)
+## 3. Exclusions and panel-only rules (the layers)
 
-Never show in the panel (the Tier 1 list):
-- Files with a .log extension, entirely
-- Any path containing a segment named .next or .metadata
-- Any path containing a segment named Temp, or a segment whose name contains filesforclaudecode (a staging folder some AI tools use; match is on the segment name, case-insensitive)
-- Partial or temporary files: suffixes .tmp, .part, .partial, .crdownload
-- Application lock and housekeeping files: names starting with ~$, and next-env.d.ts, files ending in .tsbuildinfo, Thumbs.db, desktop.ini, .DS_Store, and shortcut files (.lnk)
-- Handover notes created by tools for other tools: file names starting with HANDOFF- or handoff_
-- The user's own automation working folders, listed explicitly in their config at setup (for example the working folders of a scheduled search tool they run). This is a per-user config list, never a shipped default.
+What a save hits, in order (the full layer table is Section 3c):
 
-Deliberately NOT excluded. These were considered for the panel filter and rejected; do not add them, and do not let a setup conversation talk the user into them without flagging that they hide real work:
-- Screenshot and screen-capture files from capture tools (for example .snagx)
+- **Complete exclusions** (never in the panel, the master log, or the CSV): the config-driven rules of Section 3b. The shipped defaults cover machine output only: temporary and partial downloads (.tmp, .temp, .crdownload, .partial, .part), application sidecars and locks (.log, .swp, .swo, .pyc, .etl, .asd, .wbk, .lock, -wal, -shm, -journal), housekeeping names (desktop.ini, Thumbs.db, .DS_Store, ~$*, ~WRL*.tmp, LibreOffice locks), generated build files (next-env.d.ts, *.tsbuildinfo), and tool and system folders (.git, node_modules, __pycache__, virtualenvs, .cache, editor folders, recycle and trash folders, Drive transfer temp folders). Optional groups ship disabled (.bak files, build folders, Snagit .snagx captures, screenshot folders, and an example generated-output pair); a user enables them in their own file.
+- **Panel-only rules** (kept in the master log and CSV, never on the panel): the patterns live in the `panelOnly` block of the same two config files (Section 3b), never in code. The shipped defaults carry only Temp and tmp folder segments. Everything user-specific belongs in the user's own file: their staging folders, handover-file name patterns, shortcut files (.lnk) if they choose, and path prefixes for whole trees they work in but do not want on the panel (for example their development folder).
+- **Behaviors, in code only**: Dismiss, Hide this file always, and the link test (Section 4) are behaviors, not patterns; they live in the board and aggregator code and have no config entries.
+- The user's own automation working folders are a per-user config entry at setup (for example the output, logs, and attachments folders of a scheduled search tool they run, as segment pairs, plus its state file names). Per-user, never a shipped default.
+- Matching discipline: file-name, suffix, folder-segment, adjacent segment-pair, and path-prefix matches, all case-insensitive, never a substring search over the whole path.
+
+Deliberately NOT excluded by the shipped defaults. These were considered and rejected; do not add them as defaults, and flag it if a setup conversation drifts toward them, because they hide real work:
+
+- Screenshot and screen-capture files as a class (a user may still enable the optional screenshot or .snagx groups for their own setup)
 - Same-day duplicates of the same file in two locations (no dedupe by name or day)
-- Project instruction files such as CLAUDE.md
+- Project instruction files (for example CLAUDE.md)
 - Folders named Templates, and files with "Temporary" in their name (substring lookalikes are not matches)
 - Photos, anything in Downloads, and Save-As versions of a document
 
-The user may add exclusions of their own beyond this list by asking; Muse should restate the effect before applying. Matching discipline: exclusions are file-name, suffix, and path-segment matches as written above, never a substring search over the whole path.
+The user may add exclusions of their own beyond the defaults by asking; whoever applies the change restates its effect first (complete versus panel-only) before applying it.
 
-## 4. Permanent hide
+## 3b. Exclusions are config-driven (one design, two files)
 
-- Deleting a panel entry means "never show this save again". The file itself and the master log entry are untouched. The panel confirmation for deletion (including bulk delete) must say exactly that.
-- Detection: a managed key that was present in the previous cycle's panel payload (the aggregator keeps a baseline of each cycle's payload), was still expected, and is now missing from the panel counts as user-deleted and becomes a hide. An entry that simply rolled off the top 40, or vanished from a computer's scan, is not a hide and may return if it qualifies again. Deleting the underlying file does not remove its panel entry either; the entry stays until it rolls out of the top 40.
-- Post-edit caution: after any automated edit to a store the user also edits (this hide list, the panel, the master log), a missing record is not automatically data loss. Confirm it was not an intentional deletion by the user before restoring anything. This is the same check OPERATING-RULES.md rule 14 states generally.
-- Hides are stored as a list of hide keys ("<date>|<full path>") in the aggregator's data. Adding a hide is idempotent. The user can also name an entry in chat and ask for it to be hidden without opening the board.
-- An unhide operation exists (same key), for mistakes.
-- The pinned entry, titled "File Save Log, full log", linking to the full-log file, always sits at the top of the panel above the 40 saves and never counts toward them. It carries no Date or Full path notes, so deletion detection never hides it, and the aggregator re-adds it if it is removed.
+- The scanner and the aggregator read the SAME two JSON files, so they can never drift apart. `FileSaveLog-Excludes.json` ships with the kit and is replaced on every kit update; it holds the shipped defaults and a block of optional rule groups that ship disabled. `FileSaveLog-Excludes.user.json` holds the user's own rules and is never overwritten; the installer creates it from `FileSaveLog-Excludes.user.template.json` and fills its `selfPaths` with the user's own scanner, batch, state, and ingest folders (the feedback-loop guard).
+- Schema: `extensions` (a name ending in the entry; dot entries match the extension, suffix entries like `-wal` match the name ending), `fileNames` (wildcards allowed), `folderSegments` (one path segment anywhere), `segmentPairs` ([parent, child], the child folder directly under the parent, so unrelated folders named cache or Output are untouched), `selfPaths`, and `enableOptional` in the user file to switch on shipped optional groups (for example Snagit .snagx captures, screenshot folders, build folders, .bak files).
+- The kit ships the shared loader (`filesave-log/excludes.py`, used by the aggregator and the scanners) and the explain command (`filesave-log/explain.py`, see Section 4) with the module.
+- A `panelOnly` block in the same two files carries the record-only rules, with the same rule types plus `pathPrefixes` (absolute path prefixes). The shipped defaults carry only generic entries (Temp and tmp folder segments); a user's private entries (their staging folders, their dev-tree prefixes) belong only in their user file. The scanner ignores the panelOnly block; only the aggregator and the panel apply it.
+- All matching is case-insensitive. The Section 3 lists above describe rule CONTENT; this section is the mechanism, and the shipped defaults file is where the current content lives.
+- Fail-safe: if a config file is missing or invalid, the scanner and the aggregator fall back to a small built-in minimal set (transient downloads and lock artifacts only), write a visible warning to the scanner's log, and keep running. A bad config never crashes the scan and never excludes everything.
+- Personal rules (a user's own tool-output folders, private segment pairs) belong only in the user file, never in the shipped defaults.
+- Two numbers are settings, not constants: `panelSize` (saves shown in the panel, default 40, valid 10 to 200) and `retentionMonths` (months kept in the master log, default 12, valid 1 to 60). They ship in the defaults file's `settings` object; the user file may override either key. An invalid value (out of range, not a whole number, wrong type) falls back with a logged warning: an invalid user value to the defaults value, an invalid defaults value to the built-in 40 and 12. With no override anywhere, behavior is exactly the shipped defaults.
+- Lowering retentionMonths takes effect on the aggregator's next run: entries older than the new window are archived and removed from the working log at that point. Raising it again later does not pull archived entries back.
 
-## 4b. Rolling 12-month archive
+## 3c. The layers at a glance
 
-- The master log keeps a rolling 12 months of entries. Entries older than 12 months are archived before they are removed: grouped by year, one JSON file and one CSV file per year, written into an archive folder beside the master log (or in the cloud location the user chose for the full log).
+| Layer | Where defined | Panel | Master log and CSV | Who can change it |
+|---|---|---|---|---|---|
+| Complete exclusions | Config files (defaults + user), applied by the aggregator and the scanners | Never shown | Never kept | Kit update (defaults) or the user (their user file) |
+| Panel-only rules (panelOnly) | Config files' `panelOnly` block, applied by the aggregator | Never shown | Kept | Kit update (generic defaults) or the user (their entries) |
+| Link test | Aggregator code | Shown only if the path makes a working link (Windows drive, UNC, macOS user paths) | Kept | Kit code |
+| Dismiss (one save) | Board state, set from the panel | That save hidden; a newer save of the file returns | Kept | The user, in the panel (restorable) |
+| Hide this file always | Board state, set from the panel | File never shown until restored | Kept | The user, in the panel (restorable) |
+| Extension filter and Show x | Board state, set from the panel | Narrows what is displayed; rows are still on the board | Kept | The user, in the panel (Reset filters clears) |
+| Retention window | Config setting `retentionMonths` | Rows older than the window are gone | Archived by year, then removed | The user (config), with the archiving safeguard |
+
+## 4. Panel delete: Dismiss and Hide always
+
+- Deleting a panel row offers two actions. **Dismiss** (the default) hides only that save event: the row's day entry is suppressed, and a newer save of the same file shows again. **Hide this file always** mutes the path: no save of that file ever shows until it is restored.
+- Both lists live in the board's own durable state. A **Hidden items** view lists dismissals and always-hidden files together, each with a **Restore** action; restoring a dismissal brings that save back, restoring an always-hide lets the file's rows show again.
+- Pre-split permanent hides (from the earlier delete model, keyed "<date>|<full path>") migrate to Hide-always entries for their paths, so nothing already hidden reappears when the split model ships.
+- Detection by absence is retired: a row missing from the displayed list is never, by itself, treated as a deletion. The aggregator no longer guesses hides from panel snapshots.
+- Post-edit caution: after any automated edit to a store the user also edits (these hide lists, the panel, the master log), a missing record is not automatically data loss. Confirm it was not an intentional deletion by the user before restoring anything. This is the same check OPERATING-RULES.md rule 14 states generally.
+- The pinned entry, titled "File Save Log, full log", linking to the full-log file, always sits at the top of the panel above the saves and never counts toward them. It carries no Date or Full path notes, and the aggregator re-adds it if it is removed.
+- A "Why isn't this file shown?" control on the panel answers from the board's own state (Dismiss, Hide always, filtered out, beyond the shown count). For the exact config rule behind a complete exclusion or a panel-only rule, the user can ask Muse "why isn't <path> shown?" and Muse runs the kit's checker against the config, or the user can run it themselves if they have Python 3: `python3 explain.py "<full path>"` in the filesave-log folder (it uses the same loader as the aggregator and reads the two config files beside it). The panel dialog gives both options.
+
+## 4c. Panel filters
+
+- The panel receives **all** panel-eligible rows in the retention window (not just the top panelSize), so filtering is honest. Rows arrive newest first.
+- **Only show** filter: one checkbox per extension present among the panel-eligible rows (after exclusions, panel-only rules, the link test, dismissals, and always-hides), with a count per extension, grouped case-insensitively, plus a "(no extension)" entry, Select all, and Clear. The board stores the UNCHECKED set, so an extension that appears later is shown by default.
+- **Show x files**: how many rows are displayed after filtering, from 1 up to the panelSize setting (default 40). The status line reads "Showing N of M matching"; an empty match shows a clear empty message.
+- Both selections persist in the board's durable state across reloads and sessions. **Reset filters** clears the saved selection (all extensions checked, show count back to panelSize).
+- A small footer on the panel reads "N hidden (no link)": rows kept in the log that failed the link test in the current window.
+
+## 4b. Rolling retention archive
+
+- The master log keeps a rolling retention window (the retentionMonths setting, default 12 months). Entries older than the window are archived before they are removed: grouped by year, one JSON file and one CSV file per year, written into an archive folder beside the master log (or in the cloud location the user chose for the full log).
 - Archiving is part of the aggregator cycle, and it is fail-safe: if writing an archive file fails, the whole cycle aborts before anything is published to the panel, so an archiving problem can never silently drop history.
 - Archived entries are gone from the working log and the panel, and retrievable from the archive files at any time by asking.
 
@@ -89,5 +122,6 @@ A change to this module counts as working only when a normal scheduled cycle's o
 
 - This module watches a real computer. Paths, tools, and habits differ per person, and any part (scanner install, restart behaviour, path formats) can fail for local reasons the kit cannot foresee.
 - Setup therefore has exactly one troubleshooting pass (TROUBLESHOOTING.md). If the checks still fail, park the module: disable the scanner schedule and the aggregator job, remove nothing from the board (the empty Recent File Saves panel stays, or the user may delete it), and tell the user plainly it is parked to a later kit version with the rest of the board unaffected.
-- Local file links: panel entries carry the full path as text. Opening a file from the board is not part of this version (see INSTALL.md on the optional local-files extra); the path is there to copy.
+- The link test is defined once: a path is linkable if it is a Windows drive path, a UNC path, or starts with /Users/ or /Volumes/. The board, the aggregator and explain.py all apply that same definition.
+- Local file paths: Copy path works for every row and needs no setup. Click-to-open needs a link handler on the user's computer (the optional local-files extra); without one, use Copy path. A row is eligible when its path is a Windows drive path, a UNC path, or a macOS path under /Users/ or /Volumes/, or a web link; other paths, including workspace and sandbox paths, stay in the log only. The rules dialog says exactly this, in the same words.
 

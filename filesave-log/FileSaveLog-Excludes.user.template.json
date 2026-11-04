@@ -1,0 +1,17 @@
+{
+  "_readme": "Your personal File Save Log exclusions. Copy this file to FileSaveLog-Excludes.user.json next to the scanner and add your own rules; kit updates never overwrite your file. Same schema as FileSaveLog-Excludes.json. The installer fills selfPaths with your own scanner, batch, state and ingest folders. enableOptional lists keys from the defaults file's optional block that you want switched on (for example: snagx, screenshotFolders). Optional settings override: add a \"settings\" object to change the panel size or retention, for example \"settings\": {\"panelSize\": 60, \"retentionMonths\": 6}. panelSize must be a whole number from 10 to 200, retentionMonths a whole number from 1 to 60; an invalid value is ignored with a warning and the defaults file value applies. WARNING: lowering retentionMonths shortens the window the log keeps, so the aggregator's next run archives and removes entries older than the new window. Raising it again later does not bring archived entries back into the working log. panelOnly rules keep files in the log and CSV but off the panel (for example a staging folder you still want a record of); pathPrefixes there hide whole trees from the panel only.",
+  "version": 1,
+  "extensions": [],
+  "fileNames": [],
+  "folderSegments": [],
+  "segmentPairs": [],
+  "selfPaths": [],
+  "enableOptional": [],
+  "panelOnly": {
+    "extensions": [],
+    "fileNames": [],
+    "folderSegments": [],
+    "segmentPairs": [],
+    "pathPrefixes": []
+  }
+}
