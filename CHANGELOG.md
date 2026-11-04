@@ -13,6 +13,8 @@
 
 - Scanner now stops with a clear error and leaves state untouched when config.json is malformed or has no roots.
 
+- prompts/05 now says how to install PowerShell 7 when the diagnostic reports it missing.
+
 ## 0.1.5 (pilot)
 
 The kit now carries its real license, which was the last piece missing before a public release.
