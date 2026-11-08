@@ -1,12 +1,12 @@
 # Template Packs
 
-Version: 0.1.1
+Version: current kit version (see the VERSION file at the kit root)
 
 One core board, three starter packs. A pack changes only: panel display names, the routine catalog (ROUTINE-CATALOG.md), and the recurring panel's display name. A pack never changes the data model, the actions, or the rules. A user can rename anything a pack set, at any time, and can mix packs by renaming panels by hand. Muse should say this during the interview.
 
 ## Template panels (the ten blank panels, before pack adjustments)
 
-In default order, after the five fixed panels (recurring panel, Recent File Saves, Quick Open, Administrative, Parking Lot):
+In default order, after the five fixed panels (recurring panel, File Saves History, Quick Open, Administrative, Parking Lot):
 
 1. Projects
 2. Clients and Customers

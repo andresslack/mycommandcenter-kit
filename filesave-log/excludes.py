@@ -145,7 +145,7 @@ class ExclusionRules:
 
 # Settings (user decision 2026-11-02): two aggregator numbers are
 # user preferences, not constants: panelSize (saves shown in the
-# Recent File Saves panel) and retentionMonths (months kept in the
+# File Saves History panel) and retentionMonths (months kept in the
 # master log). They live in the defaults file's "settings" object;
 # the user file may override either key. Validation: a whole number
 # in range. An invalid user value falls back to the defaults file

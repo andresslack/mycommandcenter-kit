@@ -47,6 +47,12 @@ param(
 
 $ErrorActionPreference = 'Continue'
 
+# Kit script version marker. Install-FileSaveLog.ps1 reads this value in
+# the packaged copy and in the installed copy and never replaces an
+# installed script whose marker is newer (see the installer header).
+# Raise it whenever this script changes in the kit.
+$ScriptVersion = '1.0.0'
+
 # --------------------------------------------------------------------------
 # Helpers
 # --------------------------------------------------------------------------

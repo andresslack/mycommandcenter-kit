@@ -14,7 +14,7 @@ This kit is the installer. There is no app to download and no account to create.
 - Email Brief: a scheduled summary of your inboxes, at times you choose, written onto the board. Needs action, deadlines, signals, FYI. Every bullet has an "Add to To-do's" button that opens a form prefilled from the email (due date, category, estimate, when the email supports them; nothing is ever guessed), and an "Open" button that takes you straight to the source email. It never sends mail.
 - AI Bridge (optional): your other AI chats can see the board and request changes, through a folder in your own Google Drive.
 - Daily reviews (optional): session checkoffs for LinkedIn, or any habit you check several times a day.
-- Recent File Saves (optional): the files you saved recently, on the board, with the filler filtered out.
+- File Saves History (optional): the files you saved recently, on the board, with the filler filtered out.
 
 ## Who it is for
 
@@ -26,6 +26,7 @@ People in small companies and very busy individuals who want one board instead o
 - 30 to 45 minutes for the full install, or 15 minutes to get the board working and the rest later. The install is staged on purpose.
 - For the Email Brief: a Gmail or Outlook account you can connect in Muse.
 - For the Bridge (optional): Google Drive, plus another AI chat that can use it.
+- For File Saves History (optional): a Windows computer. File Save Log is Windows-only in this version. If your main computer is a Mac, skip that one module; everything else in this kit works on macOS. Mac support for File Save Log is planned for a later version.
 - You do not need to be technical, and you do not need to read the kit's instructions. If you can hand a file to your Muse, type one sentence, and answer questions in plain language, you can install this.
 
 ## Install

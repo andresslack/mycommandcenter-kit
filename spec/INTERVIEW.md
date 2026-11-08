@@ -1,6 +1,6 @@
 # Interview Script
 
-Version: 0.1.1
+Version: current kit version (see the VERSION file at the kit root)
 For: the user's Muse, during install and module setup.
 
 How to run every interview in this kit: ask in the order written, one topic at a time, in plain language. Build as you go and read the board back after each topic (OPERATING-RULES.md rule 8). Keep the core interview inside 10 to 15 minutes. If the user wants to stop, stop cleanly: the board is usable at any point after Step 1 of INSTALL.md. Never invent answers. A skipped question stays blank.
@@ -46,9 +46,9 @@ Closing, always say these three things before ending the core interview:
 ### Email Brief (prompts/03-email-brief-setup.md)
 1. "Which email accounts should the brief cover?" Gmail and Outlook are supported first. If an account cannot connect, start with the ones that can and say so plainly.
 2. Walk the user through connecting each account in their Muse, one at a time, confirming each connection works before the next.
-3. "When should the brief run?" Offer the default: once at the start of their workday on weekdays, with an optional second run around midday covering only what arrived since the first. Let them set times and days.
+3. "When should the brief run?" Offer the default: once at the start of their workday on weekdays, with an optional second run around midday covering only what arrived since the first. Let them set times and days. You can start with the default and change the times any time later from the cog at the top right of your board (Settings, Brief times).
 4. "Whose mail always matters, and what should I screen out?" Record VIP senders if any, and screening preferences. Default screening: newsletters, routine alerts, and generic template recruiter messages are screened out and counted in a tally line.
-5. "What are your categories for to-do's, in your own words, the areas of your work and life you sort tasks into?" Record the list exactly as given and write it into the brief instructions, where it feeds the Add to To-do's suggestions (EMAIL-BRIEF.md section 4). Categories always come from the user, never from a shipped list. Subcategories are theirs to add later, item by item.
+5. "What are your categories for to-do's, in your own words, the areas of your work and life you sort tasks into? And for each category, what subcategories do you sort it into, if any?" Ask category by category: record the categories exactly as given, in the order given, then for each one record its subcategories exactly as given, in the order given. A category with no subcategories is fine, and the user can add categories and subcategories later at any time, in the taxonomy editor in the expanded To-do's or by asking you. Write the answers into the board's Category/SubCategory taxonomy table (SPEC.md section 2.8): the setup step in prompts/03-email-brief-setup.md saves them to the table at install and reads the table back for confirmation. That table is the one source for the board's Category and SubCategory dropdowns and for the brief's Add to To-do's suggestions (EMAIL-BRIEF.md section 4); if the brief instructions also record the list, they record this same list, from the table, never a separate one. Categories and subcategories always come from the user, never from a shipped list, and never substitute a list from anywhere else. If building the full list now feels long, give me the categories you are sure of; you can add and edit categories and subcategories any time later from the cog (Settings, Categories), and your brief picks up changes automatically because it reads the same table.
 6. "For each inbox, where do you read it on the web: Gmail, Microsoft 365 Outlook, or personal Outlook?" Record per inbox; this decides the Open button's link pattern (EMAIL-BRIEF.md section 6). If they do not read mail on the web at all, record that too; the Open button simply will not appear for that inbox.
 
 ### Bridge (prompts/04-bridge-setup.md)
