@@ -1,6 +1,6 @@
 # Operating Rules for Muse
 
-Version: 0.1.1
+Version: current kit version (see the VERSION file at the kit root)
 These rules govern how the user's Muse maintains their MyCommandCenter board. They are installed as part of the board and apply in every conversation the user has with their Muse about the board. The user can change any rule at any time by saying so; a change takes effect immediately and Muse should restate the changed rule back to the user once.
 
 ## Proactivity tiers
@@ -30,7 +30,7 @@ Rules 1 to 14 below apply at every tier. A tier never overrides them.
 
 ## Two rules about stores a scheduled job owns
 
-13. When a scheduled job owns updates to a store (the Recent File Saves panel and its logs are the standing example), Muse queues changes through that job's inputs instead of writing the store directly, so manual edits never race the job's cycle and create duplicates or resurrected entries. If there is no input channel, Muse waits for the cycle or asks the user, it does not write around the job.
+13. When a scheduled job owns updates to a store (the File Saves History panel and its logs are the standing example), Muse queues changes through that job's inputs instead of writing the store directly, so manual edits never race the job's cycle and create duplicates or resurrected entries. If there is no input channel, Muse waits for the cycle or asks the user, it does not write around the job.
 14. After any automated edit to a store the user also edits, a missing record is not automatically data loss. Before restoring anything, Muse confirms the record was not intentionally deleted by the user. Restoring a user's deliberate deletion is a worse failure than a late restore.
 
 ## Routine behaviours Muse owns

@@ -1,26 +1,35 @@
 # Email Brief Specification
 
-Version: 0.1.1
+Version: current kit version (see the VERSION file at the kit root)
 Module: Email Brief (core module). It is called Email Brief, never "morning brief", because each user chooses their own run times.
 
 ## 1. Purpose
 
-On a schedule the user sets, read the user's connected inboxes and produce a short brief: what needs action, what has a deadline, what is worth noticing, and what is FYI. Deliver it in chat and store it on the board, where every action and FYI bullet carries an "Add to To-do's" button that opens a prefilled task-entry modal (section 5), and, where a deep link is available, an "Open" button that opens the source email (section 6).
+On a schedule the user sets, read the user's connected inboxes and produce a short brief: what needs action, what has a deadline, what is worth noticing, and what is FYI. Briefs are stored on the board only; scheduled runs deliver nothing to chat. On the board, every action and FYI bullet carries an "Add to To-do's" button that opens a prefilled task-entry modal (section 5), and, where a deep link is available, an "Open" button that opens the source email (section 6).
 
 ## 2. Setup contract
 
 - Inboxes: Gmail and Outlook are the supported first providers. Connect accounts one at a time with the user's involvement, confirming each works before the next. If a provider cannot connect, start with what works and say so.
 - Starting with one inbox is valid. Adding inboxes later changes nothing else.
-- Schedule: the user picks days and times. Default offer: weekdays at the start of the user's workday, plus an optional second run around midday that covers only mail arrived since the previous run and skips items already briefed unless they changed.
+- Schedule: the board entry carries five brief slots (section 2b). The user enters a time for each slot in the entry's Edit window; a slot left blank is off, so one to five briefs a day are possible. Briefs run Monday to Friday only. A single checker job runs every 15 minutes on weekdays, reads the slot times from the board entry, and produces a brief whenever a slot's time has arrived and that slot has not run today (a brief may land up to about 15 minutes after its slot time). If several slots are due at once, one brief covers them all, attributed to the latest due slot, and every due slot is marked complete. A slot whose time is edited mid-day counts as a fresh slot and runs once at its new time.
 - The setup interview also collects, and writes into the user's own brief instructions:
-  - The user's category list for to-do's (their own words for the areas of their work and life). Categories are never shipped with the kit; every install collects its own.
+  - The user's categories and subcategories for to-do's (their own words for the areas of their work and life), collected in the interview (INTERVIEW.md) and stored in the board's Category/SubCategory taxonomy table (SPEC.md section 2.8). That table is the one source for the brief's category suggestions and for the board's dropdowns. Categories are never shipped with the kit; every install collects its own. The brief reads its suggestions from the table at run time. If the brief instructions also record the list, that recording is a mirror only, taken from the table at setup and refreshed by Muse whenever it changes the table, and the table wins on any disagreement.
   - Which webmail each inbox is read in (Gmail, Microsoft 365 Outlook, or personal Outlook), which decides the Open link pattern in section 6.
   - VIP senders and screening preferences.
 - All of these can be changed at any time by asking.
 
+## 2b. The board entry
+
+- One routine entry in the recurring panel, named "Email Brief", holds everything: the five slots, the day's checkoffs, and the combined brief stack in its notes. There are never separate entries per run time.
+- The entry is a multi-session routine entry (SPEC.md, routine entries): its config stores five sessions (keys s1 to s5), each with a label ("Brief 1" to "Brief 5") and a time in 24-hour "HH:MM" form, or blank. Editing the entry exposes one time field per slot. The entry carries the dedicated routine type "Email briefs", which is what keys all of this section's editor treatments (the original entry is also recognized). The New Entry form offers "Email briefs" as a type, creating the entry with the five blank slots and the standard detail line, and it is singleton-guarded: if an Email briefs entry already exists, the form names it and creates nothing, and the server rejects a second one as well. The generic "Brief / report" type is a different, ordinary type and never gets these treatments.
+- The entry's detail line reads exactly: "Up to 5 briefs a day, Mon-Fri. 'Edit' to change times." The same slot editor is also reachable from the Settings dialog's Brief times row (SPEC.md section 9); there is only one editor. In this entry's session editor, the per-session TIME inputs carry a green fill (a tint of the board's done green) so the times read as the editable values; other entries' session editors keep the plain fill. The five sessions are fixed in this entry's editor: no label inputs and no LABEL header (the stored labels are not presented or editable), no Add session, and no Remove buttons; an italic blue helper line immediately below the first TIME header states that leaving a time empty turns that slot off. The editor for this entry also has no Delete button (the entry is machine-owned; deleting it would break the brief system), while other entries keep theirs. The saved configuration always carries the five keyed sessions. Other entries' session editors keep editable labels, Add session, and Remove.
+- Slot display: a slot with a time entered shows just its time, in the compact form used by the brief headings (no leading zero, lowercase am/pm, minutes only when nonzero: "5am", "1pm", "6:30am"), and not its "Brief x" label. A blank slot still shows its label, so it stays findable for editing. Clicking a slot marks that slot complete for today, whichever text it shows.
+- A "View" button sits immediately to the right of the entry's title. It opens the brief reader modal with the entry's full combined stack (section 7).
+- A watermark, kept with the scheduled job's state (not on the board), records the end of the last completed brief's window. Each run covers mail received after the watermark, and the watermark advances only after a brief has been written to the board successfully. A missed or failed run therefore never loses mail: the next brief covers the longer window. Monday's first brief covers everything since Friday's last brief, weekend mail included.
+
 ## 3. What a run does
 
-1. Read new mail in every connected inbox since the previous run (first run: the last 24 hours), including junk and spam folders, since real mail lands there. Read-only: the brief never sends, replies, forwards, or drafts mail. There is no delete affordance in the brief, in this version or by add-on; do not build one.
+1. Read new mail in every connected inbox since the watermark (the end of the last completed brief's window; first run ever: the last 24 hours), including junk and spam folders, since real mail lands there. Read-only: the brief never sends, replies, forwards, or drafts mail. There is no delete affordance in the brief, in this version or by add-on; do not build one.
 2. Sort what it finds into four sections, in this order:
 - Needs action: a person is waiting on the user, or a decision is required.
 - Deadlines: anything with a date attached, with the date.
@@ -46,7 +55,7 @@ Applied before the sections: newsletters, routine automated alerts, and generic 
 
 ## 4. Suggestion metadata (the TODOSUGGEST channel)
 
-At the end of the board and file versions of each brief, never in the chat-delivered brief, the brief writer appends one invisible HTML comment:
+At the end of the board and file versions of each brief, the brief writer appends one invisible HTML comment:
 
 <!--TODOSUGGEST {"<exact bold lead>": {"due_date": "...", "category": "...", "sub_category": "...", "waiting_on": "...", "estimate": "...", "notes": "...", "priority_tag": "...", "open_url": "..."}}-->
 
@@ -54,12 +63,12 @@ Rules for the writer:
 - Keys are the bullets' exact bold lead texts.
 - Include a field only when the source email actually supports it. Never invent values.
 - due_date: only for a deadline the email itself states, resolved to an absolute YYYY-MM-DD date.
-- category and sub_category: only from the user's own category list, collected at setup (section 2). Waiting On and SubCategory are distinct fields; never merge them.
+- category and sub_category: only from the user's own taxonomy table (SPEC.md section 2.8), collected at setup (section 2). A sub_category suggestion must be one listed under the suggested category in that table. Waiting On and SubCategory are distinct fields; never merge them.
 - estimate: only when the email makes the effort obvious; use the rail's estimate values (15m, 30m, 1h, 2h, and so on; a half day is 4hr).
 - priority_tag: only "Important" or "Critical", and only when the email supports it (SPEC.md, priority tags).
 - notes: only facts from the email that help do the task.
 - open_url: per section 6.
-- In a stacked brief (the recurring panel keeps the last 3 runs), each run's metadata comment stays attached to its own run. Never strip a run's comment when stacking, and never merge two runs' metadata.
+- In the combined stack (section 7), each run's metadata comment stays attached to its own run. Never merge two runs' metadata. The stack fit steps in section 7 may remove the oldest days' comments, in their stated order, only when the notes limit requires it.
 
 ## 5. The Add to To-do's modal (board behaviour; see also SPEC.md)
 
@@ -67,7 +76,7 @@ Rules for the writer:
   - Name = the bold lead. Context = the full bullet text, including its mailbox tag and the brief name.
   - Due Date, Category, SubCategory, Waiting On, Estimate, Notes, and Priority Tag prefilled from the TODOSUGGEST metadata for that bullet (primary source), falling back to explicit signals in the bullet text.
 - Nothing is added until the user confirms in the modal. Cancel, clicking the backdrop, and Escape add nothing.
-- A successful add flips that bullet's button to "Added ✓", even if the user edited the name in the modal. Matching is by open task (title match after the add, using the same dedupe as the rail): while a matching open task exists, the button shows "Added ✓"; when that task is completed or deleted, the button frees up. This is what stops carried-over bullets in a 3-run stack from ever duplicating.
+- A successful add flips that bullet's button to "Added ✓", even if the user edited the name in the modal. Matching is by open task (title match after the add, using the same dedupe as the rail): while a matching open task exists, the button shows "Added ✓"; when that task is completed or deleted, the button frees up. This is what stops bullets anywhere in the stack from ever duplicating.
 - Adding from the modal places the task at the bottom of the rail (the end of the user's manual order). Due dates in the metadata do not change that; the board's own due-soon view ordering still surfaces it.
 - Date-parsing caution when inferring anything from bullet text: skip year-less dates that are followed by a time of day (those are message timestamps, not deadlines), and never roll a recently-past year-less date forward a year.
 - Proactivity tiers (OPERATING-RULES.md) still govern what Muse itself adds from a brief without the user clicking: Tier 1 and 2, Muse adds nothing from the brief on its own; the modal is the path. Tier 3, Muse may also add directly and reports what it added in the brief. The modal exists at every tier, because it is the user's action, not Muse's.
@@ -85,11 +94,13 @@ Rules for the writer:
 
 ## 7. Where the brief goes
 
-- In chat, as the run's delivery. The chat version carries no TODOSUGGEST comment.
-- On the board: into the notes of the "Email Brief" routine item in the recurring panel, as a rolling stack of the last 3 runs, newest on top, each run headed with its date, time, and coverage line (which inboxes, since when), runs separated by a line containing only ---, and each run's TODOSUGGEST comment kept with its run at the end of that run's text. The 4th oldest run drops off the panel.
-- As a file: save each run as email-brief-YYYY-MM-DD-HHMM.md in the user's Muse workspace, with the same TODOSUGGEST comment, so the panel limit loses nothing.
+- On the board only. Scheduled runs deliver nothing to chat.
+- Into the notes of the single "Email Brief" routine entry (section 2b), as one combined stack: days newest first, and within a day, that day's briefs in slot-time order, each brief separated by a line containing only ---. Keep at most today and the previous four calendar days.
+- Each brief is headed "# {compact} Brief - {Weekday Mon D, YYYY}", with {compact} the slot's time in compact form (section 2b), followed by its coverage line (which inboxes, since when). Each brief's TODOSUGGEST comment stays at the end of that brief's text.
+- The board notes field is capped at 20,000 characters, so apply these fit steps in order until the stack fits: (a) shorten every prior day (all except today) to its Needs action items only, keeping each brief's heading, its Needs action section, a note that the full text is in the brief files, and its TODOSUGGEST comment filtered to the bullets that remain; (b) remove the TODOSUGGEST comment entirely from the oldest day, then the next oldest, until it fits; (c) drop the oldest day entirely, then the next, until it fits. Today always stays full and complete.
+- As a file: save each run as email-brief-YYYY-MM-DD-HHMM.md (the slot's time) in the user's Muse workspace, with the same TODOSUGGEST comment, so the panel limit loses nothing.
 
 ## 8. Failure behaviour
 
 - If an inbox cannot be read on a run, brief the rest and name the inbox that failed at the top of the brief. Do not present a partial brief as complete.
-- If the scheduled job itself fails, tell the user at the next conversation and offer to re-run. Never silently skip a day.
+- If a run fails before the brief is written to the board, the watermark does not advance and the slot is not marked complete, so the next checker run retries the same window. Never silently skip a day: surface repeated failures at the next conversation.

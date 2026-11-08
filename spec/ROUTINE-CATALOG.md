@@ -1,6 +1,6 @@
 # Routine Catalog and Entry Types
 
-Version: 0.1.1
+Version: current kit version (see the VERSION file at the kit root)
 The recurring panel runs on a typed entry system. This file defines the seven entry types, their behaviour, and the standard catalog. seed/SEED.json is the machine-readable seed; if the two ever disagree, SEED.json wins for what gets built, and this file explains the behaviour.
 
 ## 1. The type system
@@ -62,7 +62,7 @@ Consultant / Client Work adds:
 
 ## 6. Created by module setups (not seeded)
 
-- Email Brief [Brief / report]. Created by prompts/03-email-brief-setup.md. Its notes carry the rolling 3-brief stack (EMAIL-BRIEF.md section 7). Never create a second Email Brief entry.
+- Email Brief [Brief / report]. Created by prompts/03-email-brief-setup.md. Its notes carry the rolling combined stack, today and the previous four calendar days (EMAIL-BRIEF.md section 7). Never create a second Email Brief entry. (The entry the Email Brief setup actually creates carries the dedicated "Email briefs" type, EMAIL-BRIEF.md section 2b; the generic Brief / report type described here is a different, ordinary type.)
 - Daily reviews entry [Multiple times a day]. Created by prompts/05-reviews-and-file-log-setup.md part A. Title from the user's habit (for example "LinkedIn Daily Reviews"). Sessions are the times the user named. If the user has more than one review habit, create one entry per habit, each with its own sessions; never merge two habits into one entry.
 
 ## 7. Rules for all recurring entries

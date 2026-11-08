@@ -1,6 +1,6 @@
 # MyCommandCenter Board Specification
 
-Version: 0.1.1
+Version: current kit version (see the VERSION file at the kit root)
 For: the Muse AI that builds and maintains this board, in the user's own Muse environment.
 
 Build a private, fullstack web app (artifact) named MyCommandCenter (the user may choose a different display name during the interview; the internal name stays MyCommandCenter). The app stores its own data in the user's Muse environment. It is never published, shared, or exported. All data belongs to the user.
@@ -9,7 +9,7 @@ Build a private, fullstack web app (artifact) named MyCommandCenter (the user ma
 
 - Far-left vertical rail: the to-do list, headed "To-do's" (Section 2).
 - Panel grid to the right of the rail (Section 3). On wide screens (1040px and up) the panels area has its own vertical scrollbar, capped to the viewport height, scrolling independently of the rail. Stacked phone layouts do not.
-- The panels heading carries a Collapse all / Expand all toggle and an Add panel button styled to match it, plus the status-dot legend control (Section 3.6).
+- The board's top header bar (the strip with the date, open count, and Coach note) carries, at its right end, the status-dot legend control, an Add panel button, a Collapse all / Expand all toggle (Section 3.6), and the Settings cog (Section 9), last in that order. The panels heading itself carries only its titles. There is no freshness or "Updated" text anywhere on the board. At narrow widths the header bar stacks and the Coach note truncates before any control is squeezed.
 - Dark theme by default. All panel headers use a uniform slate charcoal fill #1c232e over a panel body fill #101216, including the recurring and links panels. The user may change the theme at any time; a theme change never touches data, and theme-dependent values in this spec are tokens, not fixed colors, where the spec says so.
 - Fold controls everywhere are triangles: expanded ▼, collapsed ▶. This covers panel headers, the Done log fold, the weekly-audit fold, and the rail Expand/Collapse button (whose wording and size are unchanged). Add ("+") buttons, the Select-mode button, link icons, and × close buttons are not triangles.
 - One editable coach note shown at the top of the board: a single short line of text with an updated-at timestamp.
@@ -27,8 +27,8 @@ Fields, with hard limits a build must enforce:
 - due_date: string YYYY-MM-DD or null. Must be a real calendar date.
 - estimate: one of 15m, 30m, 1h, 2h, 4hr, 6hr, 8hr, 10hr, 12hr, or null
 - notes: string or null, max 5000 characters
-- category: string or null, from the user's own category list where one exists
-- sub_category: string or null. Category and SubCategory are distinct fields; never merge them.
+- category: string or null. Preset suggestions come from the user's own taxonomy table (Section 2.8); free text is always accepted, whether or not the value is in the table.
+- sub_category: string or null. Preset suggestions are the subcategories listed under the task's category in the user's taxonomy table (Section 2.8); free text is always accepted. Category and SubCategory are distinct fields; never merge them.
 - waiting_on: string or null, max 240 characters
 - project_area: string or null, max 240 characters (free-form area label; the Bridge protocol writes this field)
 - priority_tag: none, Important, or Critical. Labels only: no numeric priority exists anywhere in this design, deliberately. The manual order is the numbering.
@@ -38,19 +38,25 @@ Fields, with hard limits a build must enforce:
 - created and updated timestamps (created drives the date-added sorts)
 
 ### 2.2 Rail presentation and the compact view
-- Three columns: row number, Completed button, action name.
+- Three columns: row number, the stacked Done/Delete button cell (Section 2.6), action name.
 - A collapsed row shows the title, a priority-tag pill if tagged (Section 2.5), and, if set, the due date.
 - Clicking a task name in the compact rail opens the expanded To-do's scrolled to that row, with a gold highlight on the row that clears when the drawer closes.
-- Completing a task from the compact rail shows no confirmation modal (contrast Section 2.6).
+- Completing a task from the compact rail uses the same pre-completion confirmation as the expanded view (Section 2.6); nothing is saved before the user confirms.
 - The add-task form on the rail has a functional Cancel button immediately left of "Add task": it discards the input, closes the form, and saves nothing.
 
 ### 2.3 The expanded drawer
-- A toggle opens an overlay drawer listing every open task with editable fields. Everyday columns shown by default: Name, Due Date, Context, Notes, Category, SubCategory, Waiting On, Estimate, Priority Tag. All fields are inline editable and save in place.
+- A toggle opens an overlay drawer listing every open task with editable fields. Everyday columns shown by default: Name, Due Date, Priority Tag, Context, Notes, Category, SubCategory, Waiting On, Estimate. The Priority Tag column sits between Due Date and Context and is narrow: sized to its header (with its filter funnel) and the widest tag pill, no wider. All fields are inline editable and save in place.
 - Action Name titles wrap to 2 lines at the unchanged column width; ellipsis only beyond 2 lines.
 - While editing, the Action Name cell widens to 40ch + 16px with an opaque fill and shadow, the caret anchored at position 0; it returns to column width on save or cancel.
 - Editor heights: the Notes editor opens at max(10 rows, which is 184px, the row's full current height). The Context editor opens at max(5 rows, which is 99px, the row's full current height). The taller-row rule wins in both, and any generic editor height cap is lifted for these two cells only. Other cells are unchanged.
+- Escape layering in the drawer: while an inline editor is open, Escape cancels the edit (restoring the value from when the edit opened) and closes only the editor; it never closes the drawer, and the drawer's scroll and filter state are untouched. With no editor open, Escape closes the drawer. An open modal takes precedence over both: its Escape aborts the modal only.
+- Due Date editing: clicking a Due Date cell always opens the calendar picker; no calendar icon is shown anywhere in the cell, in view or edit mode (the column's filter funnel is a separate control and stays). With the calendar open, Enter captures the currently chosen date (a valid typed value if typed, otherwise the highlighted day) and closes the calendar, saving the date; a Select button centered at the bottom of the calendar, between Clear (left) and Today (right), does the same on click. Clear and Today keep their behavior. Escape cancels without saving, per the layering rule above. The cell still displays the date as mm/dd/yy. In the drawer, the Due Date text is not bold and is set a half point larger than the drawer's standard cell text, in the cell and in the editor input alike.
+- The Category and SubCategory cells are combo boxes: a preset dropdown fed by the user's taxonomy table (Section 2.8), SubCategory presets following the category on that row, plus free-text entry in both. A control in the drawer opens the taxonomy editor (Section 2.8).
 - The drawer's Expand/Collapse symbol and the circular "+" are drawn and centered, level with their text label.
 - To-do's have no link capability anywhere: no URL field exists on a task, in the drawer, or in the brief Add to To-do's modal. URLs inside notes or brief text are never auto-linked.
+
+- Whichever arrangement is selected (My order, Batch, or a Sort view), a short description of it shows in the compact rail's sort bar in the same place and style: what the arrangement is, that Batch and Sort views are view-only and leave My order unchanged, and for My order that it is the user's own ranking, reordered by drag or by double-clicking a task's handle and typing its new position number, with new tasks joining at the bottom and tasks due in the next 3 days floating to the top. The expanded To-do's shows no arrangement description; the rail's text is the only copy. The expanded To-do's header carries a "Close To-do's Drawer" button (the X close control also remains), and the taxonomy editor is opened from an "Edit categories" clickable text in the table header section at the Category column, not from a button in the drawer's top bar.
+- Reordering in My order has exactly two methods: drag, and renumbering. Double-clicking a task's reorder handle (the grip and position number at the left of its row) turns it into an editable number field prefilled with the current position; typing an integer and committing moves the task to that position and shifts the others; a number past the end places it last and its displayed number becomes the true count; a number below 1 places it first; Escape or empty or non-numeric input cancels with no change. There is no arrow-key reordering. Both methods work only in My order and pause while the expanded To-do's column filters are active.
 
 ### 2.4 Ordering: My order, sort views, Batch
 
@@ -71,9 +77,12 @@ Fields, with hard limits a build must enforce:
 - It shows a live match count, a Clear button, and clears on Escape. A "Name only" scope checkbox exists; searching everywhere is the default.
 - While a search is active, every occurrence of the phrase is highlighted in gold in the displayed fields within scope (display-only; an open editor shows plain text), and "Make this my order" is disabled, so a filtered subset can never become the saved order.
 - The search input is narrow: 30 percent of the bar's width. Its "SEARCH ALL FIELDS" label uses the same muted color as the "Name only" label.
-- Done confirmation modal: completing a task in the expanded view only shows a post-save modal containing the task name with a green "Done", and the text "Item closed; you can undo in the Done Log of the Priority Rail." It auto-dismisses after exactly 5 seconds; the × at top right closes it; Escape and backdrop clicks close it (Escape dismisses the notice before it closes the drawer); retriggering restarts the timer; closing the drawer dismisses it.
+- Done confirmation: pressing the Done circle in the compact rail or the expanded view opens a confirmation BEFORE anything is saved. It names the task, asks to mark it done, notes it can be undone in the Done Log of the Priority Rail, and offers Cancel and a confirm button; Escape and backdrop clicks abort like Cancel. Only the confirm completes the task; aborting changes nothing, and there is no post-save notice after a completion. (This confirmation replaces an earlier post-save notice design; do not build the notice.)
+- Done and Delete controls, both views: in the compact rail and the expanded drawer, each open task has one cell with two controls stacked vertically, Done on top and Delete below. Done is a circle with a light green perimeter, the same size and style family as the rail's circle button. Delete is a trashcan icon, gray at rest, that turns red on mouse hover, with no circle or ring around it. Both carry Done and Delete tooltips. There is no separate Delete column in the drawer. The Done log keeps its own per-entry Undo and Delete controls, unchanged.
 - Completing a task sets status done and completed_at, and moves it to the Done log view, timestamped, with undo. Undo restores it as open with its prior rank.
-- Delete per row, only after a confirmation that names the task.
+- Delete is offered per task in the compact rail and the expanded view (the trashcan control in the stacked cell), and per entry in the Done log (completed tasks can be deleted too). Deleting a task is a hard delete: the task is removed permanently, there is no Trash and no restore, and a deleted task never counts as completed. One task at a time; there is no bulk or multi-select delete for tasks.
+- The delete confirmation shows the task's title, its Category, its SubCategory, and its due date (if any), and states that the deletion is permanent. Nothing is deleted before the user confirms; the user's click plus that confirmation is the explicit OK, and Muse never deletes a task on its own (OPERATING-RULES.md).
+- Every deletion is recorded in a deletion log in board-owned storage: the deletion timestamp plus a full snapshot of the deleted task's fields. getdashboard returns the log, and the Done log view shows it as a read-only Deleted list (title and deletion timestamp, no restore or undo control). The log is append-only; no control edits or removes its entries. Deleting a task never touches panel items, other tasks, or the taxonomy table.
 - A task is never completed, deleted, or given a due date or estimate by Muse on its own. See OPERATING-RULES.md.
 
 ### 2.7 Drag model (applies to rail tasks, panel items, recurring entries, and panels)
@@ -84,6 +93,43 @@ One drag model everywhere; do not implement variants.
 - The new order is committed once, on drop, and must allow a move of any distance in a single drag.
 - Keyboard reordering with arrow keys is supported wherever dragging is (Section 3.3 for panels).
 - Hovering any drag handle (panel grip, entry grip, rail grip) shows the plain default arrow cursor, never a grab-hand cursor, in rest, hover, and pressed states. A subtle hover background tint on handles is fine.
+
+### 2.8 The Category/SubCategory taxonomy table
+
+The preset lists behind the Category and SubCategory dropdowns live in board-owned storage, not in board code, so the user can change them without a rebuild.
+
+Storage and shape:
+- One taxonomy table per board, stored durably with the board's own data: an ordered list of categories, each carrying an ordered list of subcategories. A category entry is a name plus its subcategory names. Names are trimmed, non-empty strings of at most 240 characters, matching the task fields they feed.
+- Category names are unique in the table. Subcategory names are unique within their category; the same subcategory name may appear under different categories, and subcategory presets are always scoped to their category.
+- The kit ships this table empty. No categories or subcategories are ever shipped, seeded from an example, or copied from any other user's board. The setup interview collects the user's own categories, and the subcategories for each, and a setup step writes those answers into the table at install (INTERVIEW.md; prompts/01-install-core.md; prompts/03-email-brief-setup.md).
+- getdashboard returns the table as a top-level taxonomy field, so a backup taken from getdashboard (prompts/upgrade.md) includes the table verbatim. Dedicated actions also read and modify it (Section 6).
+
+One source, two consumers:
+- The table is the single source for Category and SubCategory presets: the expanded drawer's combo boxes read it, and the Email Brief's category and sub_category suggestions read the same list (EMAIL-BRIEF.md sections 2 and 4). There is no separate brief-only category list; brief suggestions are read from the table at run time. If brief instructions record a copy of the list, it is a mirror only, recorded from the table at setup and refreshed by Muse whenever it changes the table, and the table wins on any disagreement.
+- Changing the table changes only future preset suggestions. It never rewrites a stored task value by itself (see the rename and remove rules below).
+
+The editor:
+- A small editor, opened from a control in the expanded To-do's area, lists the categories and, under each, its subcategories, and lets the user add, rename, and remove categories and subcategories. New entries are added at the end of their list.
+- The editor is buffered: adds, renames, and removes are staged locally while the editor is open and nothing is written until the user presses Save, which applies the staged changes through the taxonomy actions in Section 6 and reads the table back afterward. Cancel discards the staged changes; closing the editor with unsaved changes (the X, Escape, or a backdrop click) asks first, with a confirmation headed "Close without saving?" offering Keep editing and Discard and close.
+- Save is partial, not atomic, and the spec says so plainly: the staged operations are applied one at a time, in order, and if one fails, the ones before it stay saved, the failing one and everything after it stay staged in the still-open editor, and the user is shown the error together with how many changes did save. There is no rollback.
+- The rename count can drift, also plainly: the task count shown in a rename confirmation (Rename safety, below) is counted when the change is staged and is frozen at that number. If tasks are added, edited, or completed in the meantime, the number actually rewritten at Save can differ from the number the user confirmed, and nothing re-checks or warns at Save time.
+- Add: adding a category or a subcategory touches no task. A name already present at the same level (in the same category, for a subcategory) is refused with a plain message.
+
+Rename safety:
+- On a rename, when the rename is staged (before Save is pressed), the editor counts the tasks carrying the old value and shows the old value, the new value, and that count, then offers two choices: update those tasks to the new value, or keep those tasks as they are. Nothing is rewritten without the user's explicit confirmation of one of those choices. The count is the staging-time count described above; it is not recounted at Save.
+- Subcategory renames are scoped to their category: only tasks whose category is that category and whose sub_category is the old value are counted and, if the user chooses update, rewritten.
+- If the user keeps the tasks as they are, those tasks keep the old value as free text (see the free-text rule below) and the table carries only the new value.
+- The task rewrites, when chosen, go through the normal task update path, one task at a time, and change only the renamed field.
+
+Remove safety:
+- Removing a value never deletes, completes, or hides a task.
+- If tasks carry the value being removed, the editor says how many, asks for confirmation, and offers two choices: reassign those tasks to another value at the same level (another category, or another subcategory in the same category), applied through the normal task update path, or leave the tasks carrying the removed value as free text.
+- Removing a category also removes its subcategory list from the table. It does not touch the tasks' stored category or sub_category text beyond a reassignment the user explicitly chose, and a removed category's subcategory presets simply stop being offered.
+
+Free-text rule (unchanged by the table):
+- Category and SubCategory accept any typed value, in the drawer, in the add-task form, and in the brief's Add to To-do's modal, whether or not the value is in the table.
+- A value that is not in the table displays and edits normally everywhere: the drawer, the column filters, Batch grouping, and search. It simply gets no presets: a task whose category is not in the table shows no SubCategory presets, and its SubCategory stays free text.
+- An empty table is a valid state, for a new board or a user who never gave categories. In that state every Category and SubCategory is free text and nothing is blocked.
 
 ## 3. Panels
 
@@ -117,21 +163,24 @@ One drag model everywhere; do not implement variants.
 - Panel item record: title (required, max 240), detail, notes, due_date, status (free text), url (single link field, Section 7 surface 1), sort_order, plus the recurring-only fields in Section 4.
 - Panel link record (link drawers): label (max 120 chars), destination (max 2048 chars), sort_order. See Section 7 for clickability rules.
 - Panel deletion requires an empty panel, enforced by the board's data layer, not just the UI: zero items AND zero saved drawer links. The trash control on a non-empty panel opens a "Delete all items first" dialog showing the exact item and link counts. Once a panel is empty, a normal delete confirmation still applies. Both safeguards, always.
-- System panels (recurring panel, Recent File Saves, Quick Open) cannot be deleted at all.
-- Multi-select bulk delete, all non-recurring panels: each panel header has a Select toggle, rendered as a "−" icon button in the same format as the "+" add button; while selecting, that header button reads "Cancel". Checkboxes appear on items; a bulk bar offers, in this order: [Esc] [Select all] [Delete selected (N)], plus a hint. Delete asks for confirmation showing the count, then deletes exactly the selected items in that panel; item IDs from another panel must be refused. The recurring panel is the sole exception: no Select toggle. For Recent File Saves, the confirmation also states that deleted entries stay hidden and the files and master log are untouched (FILE-SAVE-LOG.md).
+- System panels (recurring panel, File Saves History, Quick Open) cannot be deleted at all.
+- Multi-select bulk delete, all non-recurring panels: each panel header has a Select toggle, rendered as a "−" icon button in the same format as the "+" add button; while selecting, that header button reads "Cancel". Checkboxes appear on items; a bulk bar offers, in this order: [Esc] [Select all] [Delete selected (N)], plus a hint. Delete asks for confirmation showing the count, then deletes exactly the selected items in that panel; item IDs from another panel must be refused. The recurring panel is the sole exception: no Select toggle. For File Saves History, the confirmation also states that deleted entries stay hidden and the files and master log are untouched (FILE-SAVE-LOG.md).
 - Standard panel items can be reordered by drag (Section 2.7 model) and by keyboard.
 
 ### 3.6 Status dots, headers, editors
 
 - Status dots: an item's dot reflects its free-text Status. Gold #d4a72c for build, active, or link. Gray #a6adb7 for open, blank, or unrecognized (the default). Red #d66c55 for blocked, waiting, due, or decision. Green #55a879 for routine or personal. Matching is by keyword in the status text. Never rewrite a user's stored Status values to make the dots behave; unknown values simply show gray.
-- Legend: a single legend control in the panels heading shows only the four dots, no words. Its modal entries read "Status: ..." (one per meaning), and the modal's backdrop is fully transparent.
+- Legend: a single legend control in the board's top header bar shows only the four dots, no words. Its modal entries read "Status: ..." (one per meaning), and the modal's backdrop is fully transparent.
 - Two-line header rule: the board measures each panel's title against the single-line header space. If any panel's displayed title would be 9 visible characters or fewer, every header switches to two lines (name on line 1; count and controls on line 2), and all headers return to one line together when none qualifies. The switch is board-wide, never per-panel.
 - White Edit window: the panel-item Edit window's fill is a theme token, --panel-complement (the complement of the panel fill; white #ffffff in the dark theme), with dark-on-light styling scoped to the editor only. The gold Save button is unchanged. Dialogs and item rows keep the board theme. Never hard-code white; always use the token, so user themes keep working.
+- Buffered saving in the panel-item editor: the editor (including the Email Brief entry's editor, EMAIL-BRIEF.md section 2b) stages its changes locally and writes nothing until Save, from every door that opens it. Cancel discards; closing with unsaved changes asks first, with the same "Close without saving?" confirmation (Keep editing / Discard and close) as the taxonomy editor (Section 2.8). Dirtiness counts only the fields the editor actually shows for that entry. Where a Save applies more than one action, it is partial in the same way as the taxonomy editor's: earlier actions stay saved if a later one fails, and the rest stay staged in the open editor with the error shown.
 - Collapsed-panel add: clicking the add-entry "+" on a collapsed panel expands the panel and leaves the add form open and focused.
+- Card name editing: a single click on a workstream card's name never enters rename or edit mode. On hover over the name, a small pencil icon appears at its edge, and clicking the pencil opens the name editor (on touch, tapping the name selects it and shows the pencil). The pencil is the only mouse path into name editing. The same rule applies to any item title inside a card that would otherwise enter edit mode on a single click.
+- Double-clicking a card's header (its background or name, never a link, button, or other control in the header) toggles that card's expand/collapse, the same end state as its fold triangle. Double-click never opens an editor.
 
 ### 3.7 Default panel set (15 panels, in order)
 1. Recurring panel, kind routine. Display name from the interview: "Recurring Activities" by default, "Operating Rhythm" for the Small Business Operator pack. Internal identity is fixed; renaming never affects routines, the Email Brief, or session checkoffs.
-2. Recent File Saves, kind standard, system panel. Items are created only by the File Save Log module.
+2. File Saves History, kind standard, system panel. Items are created only by the File Save Log module.
 3. Quick Open, kind links, system panel. Web links the user opens daily.
 4. Administrative, kind standard.
 5. Parking Lot, kind standard, special rules in Section 5.
@@ -146,10 +195,12 @@ The full entry-type system is specified in ROUTINE-CATALOG.md. The data model he
 - Sessions config: a list of sessions, each with a stable key, a label, and a time. Per-session completions are stored against the session key, not the label, so relabeling or retiming a session never erases that day's check. At least one session is required. Sessions display sorted by time, and are editable: add, remove, relabel, retime.
 - Completions: daily and weekday entries carry a completed date; weekly entries a completed week; monthly entries a completed month; interval entries a last-completed date. An entry presents as due per its type's logic (ROUTINE-CATALOG.md).
 - The recurring panel's "+" opens a type picker with the seven types. Other panels keep the simple title-only add.
+- The shared add-entry form (the form the recurring panel's type picker leads into, and the add form on routine-kind panels) treats the name as required. The name field's label reads "Name *" with a red asterisk and the field is marked required; its placeholder reads exactly "Enter a name here for the new item". The Add entry button is disabled while the name is empty or whitespace only. Hovering the disabled button shows a tooltip above it reading "Enter a name before Adding" (italic black text on white); clicking the disabled button flashes the same tooltip for about 2.4 seconds; typing a name removes the tooltip. The name field itself keeps a white fill, with a bold gray placeholder (#808080) and black typed text. Every other data-entry input in the form carries the board's green entry treatment (a tint of the done green as fill, with a deepened green border), the same treatment as the Email Brief entry's TIME inputs; the name field is the one deliberate exception and keeps its white fill.
+- Type picker fade: once a type is selected in the picker, every unselected option's title and description render washed-out gray; the options remain fully clickable, and selecting a different one moves the fade. (The entry editor's own type control, a plain select, is a different control and does not fade.)
 - The recurring entry editor has no Status and no Due fields (standard-panel item editors keep both). An entry may still carry a stored status (shown by its dot); never strip stored values just because the editor no longer exposes the fields.
 - Per-entry links: a recurring entry supports a list of links (label plus destination, up to 20 per entry), editable in the entry's Edit window and rendered clickable on the entry (Section 7 surface 3). A single pre-existing link on an entry migrates in as the first list item.
 - Recurring entries are draggable within the panel (grip, plus Up and Down keys), persisting sort order only, under the Section 2.7 drag model.
-- One entry is reserved for Email Brief notes, type brief (created by the Email Brief setup). Its notes hold the rolling stack specified in EMAIL-BRIEF.md.
+- One entry is reserved for Email Brief notes. It carries the dedicated routine type "Email briefs" (stored type email_briefs; created by the Email Brief setup); the generic "Brief / report" type is a different, ordinary type and never gets the Email Brief treatments. Its notes hold the rolling stack specified in EMAIL-BRIEF.md.
 - Board session times are board-only state. External reminder jobs created by a module setup are separate; changing board session times does not retime them (the setup prompts keep them in sync explicitly, or warn).
 
 ## 5. Parking Lot rules
@@ -158,10 +209,16 @@ The full entry-type system is specified in ROUTINE-CATALOG.md. The data model he
 - Items Muse places here must carry, in notes: the source of the item and a suggested permanent panel.
 - The UI must not treat Parking Lot as a system panel; it is a normal standard panel that happens to be seeded. Its special behaviour is in how Muse uses it (OPERATING-RULES.md rule 6).
 
-## 6. Actions the app must publish (23)
+## 6. Actions the app must publish (25)
+
+Module actions not listed here: the File Save Log module's board actions (refresh request, start, completion, and cancel, plus its panel stats and hide/dismiss actions) are specified in spec/FILE-SAVE-LOG.md sections 4 to 4d.
 
 Reads:
-- getdashboard: returns coach note, open tasks, completed tasks (done log), panels with items and links, weekly audits.
+- getdashboard: returns coach note, open tasks, completed tasks (done log), panels with items and links, weekly audits, the Category/SubCategory taxonomy table (Section 2.8), and the deletion log (Section 2.6).
+
+Taxonomy:
+- gettaxonomy: returns the full taxonomy table, categories in order, each with its subcategories in order.
+- updatetaxonomy: replaces the taxonomy table with the ordered table provided. Validates the shape in Section 2.8 (trimmed, non-empty names, at most 240 characters, category names unique, subcategory names unique within their category). Saving the table never creates, rewrites, completes, or deletes a task; task rewrites after a rename or a removal happen only through updatetask, and only after the user's confirmation in the editor.
 
 Tasks:
 - addtask (title required; detail, due_date, estimate, notes, category, sub_category, waiting_on, project_area, priority_tag optional)
@@ -182,7 +239,7 @@ Routines and board:
 - updatecoachnote
 - saveweeklyaudit
 
-Validation the build must enforce: required titles non-empty; due dates are real YYYY-MM-DD dates; estimates from the enum in 2.1; priority_tag only none, Important, or Critical; bulk delete refuses IDs outside the named panel; panel deletion refuses a non-empty panel (items or links) at the data layer; deletes of tasks, panels, and panel items execute only after the caller's confirmation step (the confirmation itself is a UI and Muse behaviour rule, OPERATING-RULES.md).
+Validation the build must enforce: required titles non-empty; due dates are real YYYY-MM-DD dates; estimates from the enum in 2.1; priority_tag only none, Important, or Critical; the taxonomy table follows the shape and uniqueness rules in Section 2.8, while task category and sub_category values themselves are never validated against the table (free text is always accepted); bulk delete refuses IDs outside the named panel; panel deletion refuses a non-empty panel (items or links) at the data layer; deletes of tasks, panels, and panel items execute only after the caller's confirmation step (the confirmation itself is a UI and Muse behaviour rule, OPERATING-RULES.md).
 
 ## 7. Link rules: three surfaces, kept separate
 
@@ -198,9 +255,27 @@ Preservation rules: never clean up, normalize, or re-encode a stored destination
 
 ## 8. Seed
 
-Build the board empty of content: panels and routine entries from SEED.json for the chosen pack (routine entries seeded with their types), no tasks, no panel items with invented content, no links except any the user provides in the interview, and the coach note the user gives in the interview (blank until then). Demo data exists separately (seed/DEMO.json) and loads only if the user explicitly asks for it.
+Build the board empty of content: panels and routine entries from SEED.json for the chosen pack (routine entries seeded with their types), no tasks, no panel items with invented content, no links except any the user provides in the interview, and the coach note the user gives in the interview (blank until then). The taxonomy table (Section 2.8) is created empty at build, exactly as the empty taxonomy list in SEED.json, and is populated only from the user's own interview answers. Demo data exists separately (seed/DEMO.json), carries no categories, and loads only if the user explicitly asks for it. The top-level "version" field inside SEED.json and DEMO.json (currently "0.1.5") is the seed format version: it changes only when the seed data format changes, and it is independent of the kit version.
 
-## 9. What this spec deliberately omits
+## 9. Settings (the cog)
+
+A cog icon at the top right of the board's header bar opens one Settings dialog. Its purpose is post-install change: anything the setup interview asked that the user may later want to adjust has a discoverable home here, so the interview may defer non-essential questions with an honest "you can change this later from the cog".
+
+The governing rule is ONE editor per setting. The cog is a front door, never a second copy: every control in the dialog either edits a board-owned value through the same stored field its other door uses, or opens the existing editor component for that setting. No setting may have two writable homes, and the in-context doors (the drawer's "Edit categories", the Email Brief entry's own Edit, the filter modal's Show count) keep working and reach the same single editors and values.
+
+The dialog has three short sections:
+
+- Board: a row labeled "Default Show count for File Saves History" (only when the File Save Log module is installed; it is the same stored value the filter modal's Show count uses, so a change in either place is the same change), and a Categories and subcategories row that opens the taxonomy editor (Section 2.8), which remains the single taxonomy editor.
+- Email Brief: a Brief times row that opens the same editor the Email Brief entry's own Edit uses (the multi-session slot editor). No second slot editor exists.
+- File Save Log (only when the module is installed): routing rows only, for settings that live on the user's own computer and that a hosted board cannot edit. Settings that live in local files (the scanner's watched folders and schedule in its config file, the hide and keep rules in the excludes user file) must never appear as live toggles. Each routing row follows one pattern, in the same gold-bordered callout style as the explainer's "Changing rules:" box: a one-line description of what it controls, a copyable plain-words request the user can send to Muse, and, for technical users, the generic config or file path.
+
+When the File Save Log module is not installed, including every install where it was skipped (for example because the user's computer is a Mac; the module is Windows-only in this version), the dialog has only the Board and Email Brief sections, and the Board section omits the Default Show count row as well. That absence is correct, not missing structure.
+
+Dialog behaviour: Escape closes the dialog and nothing else (the board's Escape layering rule applies); on close, focus returns to the cog; the cog and dialog are keyboard reachable; the dialog is usable at phone width (390px); styling follows the board theme. Opening an editor from Settings closes the Settings dialog first, so the dialog and an editor never stack.
+
+Out of scope for the cog: anything that duplicates an existing editor in a second place, notification preferences, account or sharing settings, and any bridge or chat-side action that edits settings (read-only visibility at most).
+
+## 10. What this spec deliberately omits
 
 - No numeric priority (no P1/P2): the manual order is the numbering, and numbers would duplicate and contradict it.
 - No Eisenhower quadrants, no energy levels: maintenance overhead, tested and rejected in the reference design.

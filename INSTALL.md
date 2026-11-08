@@ -44,9 +44,11 @@ Done looks like: a Drive folder named MyCommandCenter Bridge with a board snapsh
 
 ## Step 5: Reviews and File Save Log (prompt: prompts/05-reviews-and-file-log-setup.md)
 
-Part A sets up daily review sessions (LinkedIn, or any habit) at your real times. Part B sets up Recent File Saves from folders you pick on your main computer.
+Part A sets up daily review sessions (LinkedIn, or any habit) at your real times. Part B sets up File Saves History from folders you pick on your main computer.
 
 Part B starts with a short preflight on that computer, before anything is installed: it checks that the computer is Windows, that a recent PowerShell is present, that the windowless launch this module needs can actually run on your machine, and whether the machine is managed by an employer or school, which can block parts of the setup. If the preflight fails, part B ends there, cleanly, with nothing half installed.
+
+Mac note: File Save Log is Windows-only in this version. If your main computer is a Mac, skip part B of prompt 05 and the pre-install check below entirely. Part A (daily reviews) still applies to you, and everything else in this kit works on macOS. Mac support for File Save Log is planned for a later version.
 
 Before you paste prompt 05, run the pre-install check on your main computer. It takes about a minute, installs nothing, and tells us both whether the File Save Log module can work on your machine before we set anything up.
 

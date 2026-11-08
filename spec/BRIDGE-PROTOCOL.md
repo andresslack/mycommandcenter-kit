@@ -1,6 +1,6 @@
 # AI Bridge Protocol
 
-Version: 0.1.1
+Version: current kit version (see the VERSION file at the kit root)
 Module: AI Bridge. Purpose: let AI chats outside the user's Muse (for example Claude, ChatGPT, Gemini, or Grok) see the user's MyCommandCenter board and request changes to it, without any of them having direct access to the board.
 
 ## 1. How it works
@@ -24,7 +24,7 @@ This protocol is AI-agnostic on purpose: any assistant that can read Drive files
 a) MyCommandCenter.md, the snapshot. Never edited by an external AI. Format:
 - First line: # MyCommandCenter Snapshot
 - Second line: Generated YYYY-MM-DD HH:MM (user's timezone)
-- Then, in order: coach note; Priority Rail open tasks (rank order, with due dates); done count (count only, not the log); panels in order, each with its items (title, detail, status, due date if any) and links; Parking Lot called out by name.
+- Then, in order: coach note; Priority Rail open tasks (rank order, with due dates); done count (count only, not the log); panels in order, each with its items (title, detail, status, due date if any) and links; Parking Lot called out by name; and a read-only section listing the board's Category/SubCategory taxonomy table (SPEC.md section 2.8), so an external AI suggests categories that actually exist. The taxonomy section is read-only: no Bridge action edits the table.
 - Keep it compact. It is a working view, not an archive.
 
 b) BRIDGE-README.md, the protocol file for external AIs. Its content is section 4 of this spec, rewritten in second person for the external AI, plus the rules in section 4.5. The setup prompt generates it from this spec; do not ship a separate copy in the kit.
@@ -104,7 +104,7 @@ Optional changes: title, detail, notes, status, due_date, url. The value none cl
 - A request is applied at most once. APPLIED- and ERROR- files are never reprocessed.
 
 ### 4.5 Rules the protocol teaches external AIs
-- Lookups (complete, update, delete) match titles exactly, ignoring case. If nothing matches, or more than one thing matches, the request fails with an error and nothing changes. Deletes are permanent.
+- Lookups (complete, update, delete) match titles exactly, ignoring case. If nothing matches, or more than one thing matches, the request fails with an error and nothing changes. Deletes are permanent. delete-task matches open tasks only: a completed task cannot be deleted through the Bridge (deleting one is done on the board itself, in the Done log).
 - Check the snapshot before adding anything; if it is already there, do not submit a duplicate. The snapshot can lag the board by up to an hour.
 - Never invent deadlines, estimates, or links. Only use dates and facts the user gave, or that appear in the snapshot.
 - Keep detail to one or two sentences.

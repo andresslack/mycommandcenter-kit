@@ -26,7 +26,7 @@ Check, in order:
 3. Was the file renamed with an ERROR- prefix? Open it; the top line says what was wrong, usually a panel or task title that does not match the snapshot exactly. Fix the cause and have the external AI create a new request file (requests are never edited, always recreated).
 4. Remember the snapshot lags the board by up to an hour. A duplicate refusal often means the item was added in the last hour and the snapshot the external AI read was older.
 
-## Recent File Saves shows junk files, or a deleted entry came back
+## File Saves History shows junk files, or a deleted entry came back
 
 Junk: tell your Muse the file name or type you do not want to see; adding an exclusion is a normal request. An entry that came back after deletion: ask your Muse to confirm the entry was added to the hide list, and to verify across the next scheduled cycle, not by pushing the panel by hand (a manual push can race the cycle and re-add things). If problems persist after one pass at these fixes, the File Save Log parking rule applies (spec/FILE-SAVE-LOG.md section 6): Muse disables the module cleanly and the rest of the board carries on. If the problem is on the computer side instead (the scanner has stopped running, a window has started appearing, folders or the log destination have become unreachable), run the pre-install check again (preinstall/Check-FileSaveLogRequirements.ps1, the same script from INSTALL.md step 5) and give your Muse the new report; it re-tests the machine requirements as they are now, and a change since install, a Windows update, new security software, a moved folder, is the usual story.
 

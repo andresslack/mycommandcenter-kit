@@ -1,5 +1,5 @@
 {
-  "_notes": "Structure only. No tasks, no panel items with content, no links. The rail heading is \"To-do's\" (rail_heading, top level). Panels seed blank except the Administrative starter checklist in the small-business pack (titles only). Routine entries listed here are created in the recurring panel at install, each with its entry type (ROUTINE-CATALOG.md); weekly-check entries carry weekday null until the user picks a due weekday in the interview. The Email Brief entry (type brief) is created by prompts/03-email-brief-setup.md and the reviews entry (type sessions) by prompts/05-reviews-and-file-log-setup.md, not here.",
+  "_notes": "Structure only. No tasks, no panel items with content, no links. The taxonomy field is the board's Category/SubCategory taxonomy table (SPEC.md section 2.8) and ships as an empty list, always: categories and subcategories are never shipped, and the table is populated only from the user's own interview answers at install. The rail heading is \"To-do's\" (rail_heading, top level). Panels seed blank except the Administrative starter checklist in the small-business pack (titles only). Routine entries listed here are created in the recurring panel at install, each with its entry type (ROUTINE-CATALOG.md); weekly-check entries carry weekday null until the user picks a due weekday in the interview. The Email Brief entry (type brief) is created by prompts/03-email-brief-setup.md and the reviews entry (type sessions) by prompts/05-reviews-and-file-log-setup.md, not here.",
   "packs": {
     "consultant": {
       "label": "Consultant / Client Work",
@@ -15,7 +15,7 @@
           "kind": "standard",
           "position": 2,
           "system": true,
-          "title": "Recent File Saves"
+          "title": "File Saves History"
         },
         {
           "kind": "links",
@@ -166,7 +166,7 @@
           "kind": "standard",
           "position": 2,
           "system": true,
-          "title": "Recent File Saves"
+          "title": "File Saves History"
         },
         {
           "kind": "links",
@@ -309,7 +309,7 @@
           "kind": "standard",
           "position": 2,
           "system": true,
-          "title": "Recent File Saves"
+          "title": "File Saves History"
         },
         {
           "kind": "links",
@@ -422,5 +422,6 @@
     }
   },
   "rail_heading": "To-do's",
+  "taxonomy": [],
   "version": "0.1.5"
 }

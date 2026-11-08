@@ -20,7 +20,7 @@ Day 7, first week:
 - Is Muse's proactivity level (your tier) right, too much, or too little?
 
 Day 30:
-- Keep, change, or drop, per module: board and rail, Email Brief, Bridge, daily reviews, Recent File Saves.
+- Keep, change, or drop, per module: board and rail, Email Brief, Bridge, daily reviews, File Saves History.
 - Your honest estimate: how much time a week does this save you, if any?
 - Would you recommend it to someone like you? What would you tell them first?
 
@@ -29,5 +29,5 @@ Day 30:
 - Muse invented a date, estimate, name, or link (Operating Rules, rule 3).
 - Muse marked something done by itself (rule 2), or deleted something without confirmation (rule 1).
 - The same task or item appeared twice (rule 4).
-- A deleted Recent File Saves entry came back after a full cycle.
+- A deleted File Saves History entry came back after a full cycle.
 - A Bridge request was applied twice, or applied differently from what the file said.
