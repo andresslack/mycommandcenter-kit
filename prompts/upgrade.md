@@ -1,5 +1,7 @@
 # Upgrade
 
+How to start: give this whole file to the Muse that hosts your board and say "Upgrade my board with this file."
+
 Use this prompt to apply a newer version of the MyCommandCenter kit to an existing board, without losing any data. The user provides the new kit files (or points Muse at the kit repository release).
 
 This prompt is written for boards installed from kit v0.1.5 or v0.2.0. It detects which one it is dealing with before changing anything, and it fails safe: an install it does not recognize is reported, not improvised on.

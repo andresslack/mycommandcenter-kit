@@ -6,7 +6,7 @@ One core board, three starter packs. A pack changes only: panel display names, t
 
 ## Template panels (the ten blank panels, before pack adjustments)
 
-In default order, after the five fixed panels (recurring panel, File Saves History, Quick Open, Administrative, Parking Lot):
+In default order, after the fixed panels (recurring panel, Quick Open, Administrative, Parking Lot, and File Saves History, which is created only when the File Save Log module is set up and sits second when it exists):
 
 1. Projects
 2. Clients and Customers

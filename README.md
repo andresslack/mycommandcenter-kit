@@ -22,12 +22,52 @@ People in small companies and very busy individuals who want one board instead o
 
 ## What you need
 
-- Your own Muse AI, where the board will live.
-- 30 to 45 minutes for the full install, or 15 minutes to get the board working and the rest later. The install is staged on purpose.
-- For the Email Brief: a Gmail or Outlook account you can connect in Muse.
-- For the Bridge (optional): Google Drive, plus another AI chat that can use it.
-- For File Saves History (optional): a Windows computer. File Save Log is Windows-only in this version. If your main computer is a Mac, skip that one module; everything else in this kit works on macOS. Mac support for File Save Log is planned for a later version.
-- You do not need to be technical, and you do not need to read the kit's instructions. If you can hand a file to your Muse, type one sentence, and answer questions in plain language, you can install this.
+The essentials:
+
+- Your own Muse AI account, where the board will live. There is no separate app to download and no other account to create.
+- A Muse plan that supports the connected features. Connecting email and running scheduled jobs (the briefs use both) depend on plan features, so check your plan if you are on a free tier.
+- A device, a browser, and an internet connection: whatever you run Muse on day to day.
+- 30 to 45 minutes for the full install, or about 15 minutes to get the board working and the rest later. The install is staged on purpose.
+- The ability to hand Muse a file and answer questions in plain language. You do not need to be technical, and you do not need to read the kit's instructions.
+
+Decisions only you can supply (Muse asks; you answer in your own words):
+
+- A starter pack: solo, small-business, or consultant.
+- Your categories and subcategories for to-do's. A partial list is fine; categories can be added and edited later from the Settings cog, and the Email Brief reads the same table.
+- Your routines, panels, and projects: the areas of your work and life the board should track.
+- For the Email Brief: which email accounts it covers (one is enough to start), up to five brief times a day, and the names of anyone whose mail always matters to you.
+
+For the Email Brief (a core module):
+
+- A Gmail or Outlook account you can connect in Muse. The connection is the only way the brief can read your mail. The brief never sends mail.
+
+For the Bridge (optional):
+
+- A Google Drive account (a free one is enough), plus another AI chat that can work with it. Skipping the Bridge changes nothing else.
+
+For the daily reviews (optional):
+
+- A LinkedIn account, if the reviews are for LinkedIn. The same mechanism serves any habit checked several times a day, with nothing extra required.
+
+For File Saves History (optional; Windows-only in this version):
+
+- A Windows computer as your main machine. If your main computer is a Mac, skip that one module; everything else in this kit works on macOS. Mac support for File Save Log is planned for a later version.
+- Windows PowerShell 5.1 (built into Windows), to run the one-minute pre-install check, which installs nothing and verifies the machine before anything is set up.
+- PowerShell 7 (free from Microsoft). The scanner runs on it; if the pre-install check finds it missing, the check itself gives the exact remedy.
+- Task Scheduler, and you normally signed in: the scanner's task runs at sign-in and every 15 minutes while you are signed in on that computer.
+- Permission to run the kit's scripts on your own machine, started by the documented one-line launch.
+- Folders to watch, chosen by you during setup. The scanner records file names, paths, and times only; it never reads file contents.
+- Optional: Google Drive syncing to that computer, which carries the scanner's batches. Without Drive sync, the installer uses a local folder instead and says so.
+- Ongoing: pasting "Update File Saves History" into Muse Chat whenever you want the panel updated. Updates are manual only; nothing runs on a schedule.
+
+One optional extra:
+
+- The local-files handler (Windows only) lets board links open local files directly. Without it, rows show the path as text with a Copy path button, which works on every platform.
+
+Two standing rules of use:
+
+- Only you send email. Your Muse prepares drafts; it never sends.
+- Your data stays in your own accounts. Board data lives in your Muse and your own connected accounts. The kit has no telemetry and sends nothing back; feedback is voluntary.
 
 ## Install
 

@@ -22,7 +22,7 @@ Before step 1, get the kit files where your Muse can read them: the unzipped kit
 
 Your Muse builds the board and interviews you: board name and theme, starter pack, what the board must track, a one-line coach note, how proactive Muse may be, and your first real tasks.
 
-Done looks like: a Priority Rail with your first 3 to 7 real tasks ranked, 15 panels in order, your routines panel under the name you chose (Recurring Activities by default, Operating Rhythm for the small business pack), and a summary from Claude confirming all of it. The board is fully usable after this step.
+Done looks like: a Priority Rail with your first 3 to 7 real tasks ranked, 14 panels in order (a 15th, File Saves History, is added in step 5 if you set up the optional File Save Log module), your routines panel under the name you chose (Recurring Activities by default, Operating Rhythm for the small business pack), and a summary from Claude confirming all of it. The board is fully usable after this step.
 
 ## Step 2: Import and personalize (prompt: prompts/02-import-and-personalize.md)
 

@@ -122,7 +122,7 @@
 .PARAMETER SkipBaselineScan
     Skips the one baseline scan a fresh install runs at the end.
 #>
-[CmdletBinding()]
+[CmdletBinding(PositionalBinding=$false)]
 param(
     [string]$InstallDir = (Join-Path $env:USERPROFILE 'tools\file-save-log'),
     [string[]]$Roots,
@@ -133,6 +133,22 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+
+# Binding hardening (v0.3.1): parameters bind by name only
+# (PositionalBinding=$false above), so a stray positional value can
+# never land in the wrong parameter. Under pwsh -File, a comma list
+# such as -Roots A,B can also arrive as ONE string "A,B"; split any
+# comma-joined Roots value into separate roots so that form works too.
+if ($Roots) {
+    $Roots = @($Roots | ForEach-Object { $_ -split ',' } | ForEach-Object { $_.Trim() } | Where-Object { $_ -ne '' })
+}
+# A -PwshPath that does not name the PowerShell 7 executable means an
+# argument landed in the wrong parameter (the classic cause is a
+# comma-separated -Roots list passed through pwsh -File). Fail loudly
+# with the remedy instead of installing with a wrong path.
+if ($PwshPath -and (Split-Path -Leaf $PwshPath) -notin @('pwsh.exe', 'pwsh')) {
+    throw "The -PwshPath value '$PwshPath' does not name the PowerShell 7 executable (pwsh.exe). An argument has probably landed in the wrong parameter; the usual cause is a comma-separated -Roots list passed through pwsh -File. Re-run from inside a PowerShell 7 session with the call operator and quoted values, for example: & '.\Install-FileSaveLog.ps1' -Roots 'A','B'"
+}
 
 $SourceDir        = $PSScriptRoot
 $ScannerSource    = Join-Path $SourceDir 'Scan-FileSaves.ps1'
