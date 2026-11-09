@@ -1,5 +1,5 @@
 {
-  "_notes": "Structure only. No tasks, no panel items with content, no links. The taxonomy field is the board's Category/SubCategory taxonomy table (SPEC.md section 2.8) and ships as an empty list, always: categories and subcategories are never shipped, and the table is populated only from the user's own interview answers at install. The rail heading is \"To-do's\" (rail_heading, top level). Panels seed blank except the Administrative starter checklist in the small-business pack (titles only). Routine entries listed here are created in the recurring panel at install, each with its entry type (ROUTINE-CATALOG.md); weekly-check entries carry weekday null until the user picks a due weekday in the interview. The Email Brief entry (type brief) is created by prompts/03-email-brief-setup.md and the reviews entry (type sessions) by prompts/05-reviews-and-file-log-setup.md, not here.",
+  "_notes": "Structure only. No tasks, no panel items with content, no links. The taxonomy field is the board's Category/SubCategory taxonomy table (SPEC.md section 2.8) and ships as an empty list, always: categories and subcategories are never shipped, and the table is populated only from the user's own interview answers at install. The rail heading is \"To-do's\" (rail_heading, top level). Panels seed blank except the Administrative starter checklist in the small-business pack (titles only). The File Saves History panel carries requires_module file_save_log: it is created at install only when the File Save Log module is being set up (prompts/05 creates it then if it is absent); an install that skips the module never gets the panel. Routine entries listed here are created in the recurring panel at install, each with its entry type (ROUTINE-CATALOG.md); weekly-check entries carry weekday null until the user picks a due weekday in the interview. The Email Brief entry (type brief) is created by prompts/03-email-brief-setup.md and the reviews entry (type sessions) by prompts/05-reviews-and-file-log-setup.md, not here.",
   "packs": {
     "consultant": {
       "label": "Consultant / Client Work",
@@ -14,6 +14,7 @@
         {
           "kind": "standard",
           "position": 2,
+          "requires_module": "file_save_log",
           "system": true,
           "title": "File Saves History"
         },
@@ -165,6 +166,7 @@
         {
           "kind": "standard",
           "position": 2,
+          "requires_module": "file_save_log",
           "system": true,
           "title": "File Saves History"
         },
@@ -308,6 +310,7 @@
         {
           "kind": "standard",
           "position": 2,
+          "requires_module": "file_save_log",
           "system": true,
           "title": "File Saves History"
         },
