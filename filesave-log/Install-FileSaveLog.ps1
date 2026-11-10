@@ -134,6 +134,17 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
+# Task-name validation (v0.3.2): -TaskName is validated before anything
+# is copied, written, or run. A name that is empty after trimming, or
+# that contains a character Windows Task Scheduler forbids in a task
+# name ( \ / : * ? " < > | ), fails the run at once, with no side
+# effects. (Before this guard, an invalid name surfaced only at task
+# registration, after the files were copied, the config written, and
+# the baseline scan run.)
+if ([string]::IsNullOrWhiteSpace($TaskName) -or ($TaskName -match '[\\/:*?"<>|]')) {
+    throw "The -TaskName value '$TaskName' is not a valid scheduled task name. A task name must be non-empty and must not contain any of these characters: \ / : * ? `" < > | . Nothing was installed. Choose a simple name (for example 'FileSaveLog-Scan') and re-run."
+}
+
 # Binding hardening (v0.3.1): parameters bind by name only
 # (PositionalBinding=$false above), so a stray positional value can
 # never land in the wrong parameter. Under pwsh -File, a comma list
