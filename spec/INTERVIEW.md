@@ -21,8 +21,8 @@ Opening, say this first, in your own words but with this content: this board is 
 - "Is this board for work, personal life, or both?"
 - "What are the 3 to 5 areas of your work or life this board has to keep track of?" Use the answers to rename the ten template panels. Any template panel no answer covers keeps its default name from TEMPLATE-PACKS.md; tell the user those are blank spares they can rename or delete later.
 
-4. Coach note
-- "What is one short line you would like to see at the top of your board, to keep you on track?" Save it with updatecoachnote. It can be blank.
+4. Coach aphorisms
+- The COACH band at the top of the board rotates through a set of short aphorisms, one every few minutes (SPEC.md section 1). The kit ships a starter set of 20. Ask: "Your board shows a rotating set of short Coach aphorisms at the top. Keep the starter set of 20, or give me your own lines to use instead?" If they give their own lines, save the whole set with setcoachaphorisms, each line as one aphorism (two short sentences per line become its two displayed lines). Tell them they can replace the set at any time later just by asking.
 
 5. Proactivity tier (OPERATING-RULES.md)
 - Explain the three tiers in one sentence each. Recommend Tier 2. Record the choice and restate it once.

@@ -24,7 +24,7 @@ This protocol is AI-agnostic on purpose: any assistant that can read Drive files
 a) MyCommandCenter.md, the snapshot. Never edited by an external AI. Format:
 - First line: # MyCommandCenter Snapshot
 - Second line: Generated YYYY-MM-DD HH:MM (user's timezone)
-- Then, in order: coach note; Priority Rail open tasks (rank order, with due dates); done count (count only, not the log); panels in order, each with its items (title, detail, status, due date if any) and links; Parking Lot called out by name; and a read-only section listing the board's Category/SubCategory taxonomy table (SPEC.md section 2.8), so an external AI suggests categories that actually exist. The taxonomy section is read-only: no Bridge action edits the table.
+- Then, in order: the COACH aphorism set and its current position; Priority Rail open tasks (rank order, with due dates); done count (count only, not the log); panels in order, each with its items (title, detail, status, due date if any) and links; a Project item (SPEC.md section 3.8) also renders its Next and Stuck lines, taken from its first open action; Parking Lot called out by name; and a read-only section listing the board's Category/SubCategory taxonomy table (SPEC.md section 2.8), so an external AI suggests categories that actually exist. The taxonomy section is read-only: no Bridge action edits the table.
 - Keep it compact. It is a working view, not an archive.
 
 b) BRIDGE-README.md, the protocol file for external AIs. Its content is section 4 of this spec, rewritten in second person for the external AI, plus the rules in section 4.5. The setup prompt generates it from this spec; do not ship a separate copy in the kit.
@@ -43,7 +43,7 @@ due: 2026-11-04
 detail: Ask about the crown appointment
 estimate: 30m
 ```
-title is required. due must be YYYY-MM-DD and a real date. estimate must be one of 15m, 30m, 1h, 2h, 4hr, 6hr, 8hr, 10hr, 12hr. Optional: notes, waiting_on, project_area.
+title is required. due must be YYYY-MM-DD and a real date. estimate must be one of 5m, 15m, 30m, 1h, 2h, 4hr, 6hr, 8hr, 10hr, 12hr, 12+hr. Optional: notes, waiting_on, project_area. Field limits follow the board's task record (SPEC.md section 2.1): title 240 characters, detail 600, notes 5,000, waiting_on 5,000, project_area 240.
 
 Format 2, new panel:
 ```
@@ -79,7 +79,7 @@ action: update-task
 task: Call the dentist
 due: 2026-11-05
 ```
-task (the exact current title) is required. Optional changes: title, due, detail, notes, estimate, waiting_on, project_area, rank. Only listed fields change. The value none clears a field.
+task (the exact current title) is required. Optional changes: title, due, detail, notes, estimate, waiting_on, project_area, rank. Only listed fields change. The value none clears a field. estimate, when given, must be one of the values Format 1 lists.
 
 Format 7, delete a panel item:
 ```
@@ -93,10 +93,12 @@ Format 8, update a panel item:
 action: update-panel-item
 panel: Projects
 item: Fence repair quotes
-status: waiting
+status: blocked
 due_date: 2026-11-09
 ```
 Optional changes: title, detail, notes, status, due_date, url. The value none clears a field.
+
+Project fields and next actions (SPEC.md section 3.8) cannot be created or changed through the Bridge: no request format carries them. Applying an add-panel-item or update-panel-item request leaves an item's type, its Project fields, and its next actions exactly as stored.
 
 ### 4.4 Outcomes and renaming
 - Success: rename the file to APPLIED-<original name>. The board change is real before the rename.

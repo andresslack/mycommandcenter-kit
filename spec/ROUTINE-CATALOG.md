@@ -9,7 +9,7 @@ The recurring panel runs on a typed entry system. This file defines the seven en
   1. Daily check: due every day; checked with a date.
   2. Weekday-only check: due Monday to Friday only; checked with a date.
   3. Multiple times a day: the sessions model (section 2).
-  4. Brief / report: carries long notes text and opens in the reader view; the Email Brief entry is this type (EMAIL-BRIEF.md). Not a checkoff entry.
+  4. Brief / report: carries long notes text and opens in the reader view. Not a checkoff entry. The Email Brief entry is not this type: it carries the dedicated Email briefs type, created only by the Email Brief setup (EMAIL-BRIEF.md section 2b).
   5. Weekly check: the user picks the due weekday; checked per week (weeks run Monday to Sunday, the same rule the cue pills use).
   6. Monthly check: due day 1 to 29 picked by the user, or "Last day of Month", stored distinctly as the value "last" and resolved to each month's real final day. Legacy stored values 30 and 31 are read as "last".
   7. Every N days: an interval in days; due when N days have passed since the last check (or since creation, if never checked).
@@ -62,7 +62,7 @@ Consultant / Client Work adds:
 
 ## 6. Created by module setups (not seeded)
 
-- Email Brief [Brief / report]. Created by prompts/03-email-brief-setup.md. Its notes carry the rolling combined stack, today and the previous four calendar days (EMAIL-BRIEF.md section 7). Never create a second Email Brief entry. (The entry the Email Brief setup actually creates carries the dedicated "Email briefs" type, EMAIL-BRIEF.md section 2b; the generic Brief / report type described here is a different, ordinary type.)
+- Email Brief [Email briefs]. Created by prompts/03-email-brief-setup.md with the dedicated "Email briefs" type (EMAIL-BRIEF.md section 2b); the generic Brief / report type described above is a different, ordinary type. Its notes carry the rolling combined stack, today and the previous four calendar days (EMAIL-BRIEF.md section 7). Never create a second Email Brief entry.
 - Daily reviews entry [Multiple times a day]. Created by prompts/05-reviews-and-file-log-setup.md part A. Title from the user's habit (for example "LinkedIn Daily Reviews"). Sessions are the times the user named. If the user has more than one review habit, create one entry per habit, each with its own sessions; never merge two habits into one entry.
 
 ## 7. Rules for all recurring entries

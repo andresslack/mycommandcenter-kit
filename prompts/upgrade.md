@@ -4,9 +4,9 @@ How to start: give this whole file to the Muse that hosts your board and say "Up
 
 Use this prompt to apply a newer version of the MyCommandCenter kit to an existing board, without losing any data. The user provides the new kit files (or points Muse at the kit repository release).
 
-This prompt is written for boards installed from kit v0.1.5 or v0.2.0. It detects which one it is dealing with before changing anything, and it fails safe: an install it does not recognize is reported, not improvised on.
+This prompt is written for boards installed from kit v0.1.5, v0.2.0, or v0.3.2. It detects which one it is dealing with before changing anything, and it fails safe: an install it does not recognize is reported, not improvised on.
 
-Status: this detect-and-branch flow is UNRUN on a real v0.1.5 board. What could not be verified without one is listed at the end.
+Status: this detect-and-branch flow is UNRUN on a real v0.1.5 board. The v0.3.2 to v0.4.0 path (step 4b) is new in v0.4.0 and is likewise UNRUN on a real v0.3.2 board until a pilot runs it. What could not be verified without one is listed at the end.
 
 ---
 
@@ -22,15 +22,16 @@ Read the new kit's VERSION and CHANGELOG.md. Then examine my current install and
 - Email Brief structure: whether my board has the old two-entry structure of the two-entry era, the combined single entry, or no brief entry.
 - Category table: whether a Category/SubCategory taxonomy table exists on my board, and if it does, how many categories and subcategories it holds.
 - Board actions and data: which of the newer board features my board already has (the taxonomy table returned by getdashboard, a deletion log, the file-save refresh stamps), reading getdashboard to find out.
+- v0.4.0 features: which of these my board already has: per-panel item sort; the due-soon window setting; the user-only Email Brief checkoff store; the brief flags store; the brief Minimize store; the brief pop-up publication record; the Project item storage (an item_type field on panel items and a next-actions store); the COACH aphorism set and rotation position; and the board's published action count (SPEC.md section 6 lists 32 in v0.4.0).
 
-Then state which branch I am on: v0.1.5, v0.2.0, or unrecognized. This prompt's branches are written for v0.1.5 and v0.2.0. If my install is older, newer, between versions, or cannot be identified, STOP and report what you found instead of improvising an upgrade path.
+Then state which branch I am on: v0.1.5, v0.2.0, or v0.3.2. This prompt's branches are written for v0.1.5, v0.2.0, and v0.3.2. If my install is older, newer, between versions, or cannot be identified, STOP and report what you found instead of improvising an upgrade path.
 
 ## 2. Backup and rollback plan (before any change)
 
 - Call getdashboard and save the complete result as a file named with today's date (for example mycommandcenter-backup-YYYY-MM-DD.json) in my Muse workspace. Confirm the file exists before going further. If the backup fails, stop. The backup includes my taxonomy table if I have one; say so when you confirm it.
 - If a File Save Log scanner exists, back up its script, both config files, its state file, and the master log next to the originals with the date in the names.
 - State the rollback plan in plain words: what would be restored, from which files, and in what order. Restoring is something you walk me through if I ask, never something you do automatically.
-- Summarize the upgrade plan the diagnosis produced (which of steps 3 to 7 apply to me and which are skipped, and why) and wait for my explicit yes. Every later step that changes my data also waits for my yes at that step.
+- Summarize the upgrade plan the diagnosis produced (which of steps 3 to 7, including the v0.4.0 step 4b, apply to me and which are skipped, and why) and wait for my explicit yes. Every later step that changes my data also waits for my yes at that step.
 
 Two standing constraints on everything below. First, a version change upgrades code, layout, and rules only: my board data (tasks, items, notes, order, settings) is never rolled back, reset, or re-seeded by an upgrade. Second, where a scheduled job owns updates to a store (for example the File Save Log aggregator owns the File Saves History panel), make upgrade changes through that job's inputs, never by writing the store directly, so the upgrade cannot race a cycle.
 
@@ -48,6 +49,31 @@ Two standing constraints on everything below. First, a version change upgrades c
   - Changed rules in OPERATING-RULES.md: show me the differences in plain language and ask before adopting any rule change that would make you more proactive. Rule changes that make you more careful apply automatically, but still tell me.
   - Never delete or rewrite my tasks, items, links, notes, or settings as part of an upgrade. If the new spec removes a feature I use, leave my version of it alone and flag it for my decision.
   - Lossless migration promise (recurring entries): converting my existing recurring entries to the typed entry system must lose nothing. Checkoffs recorded under the older model, including a reviews entry's same-day session checks, carry into the typed model intact, stored against the session keys you create for them. A pre-existing single link on an entry becomes the first item of its link list. Stored Status values survive even where the new editor no longer shows the field. After migrating, show me the before and after checkoff state for any entry that had a check recorded today.
+
+## 4b. The v0.4.0 changes (the v0.3.2 branch; older branches reach the same end state through step 4)
+
+Apply each of these only where the step 1 diagnosis found it missing, and only with my yes at this step. Only one item here rewrites existing data, the status remap, and only on my explicit yes at that item; everything else is additive, a schema maximum, a job's text, or presentation.
+
+| Change | Rewrites existing data | Needs the user's explicit yes |
+|---|---|---|
+| Minimize store (created only where missing, empty) | no | yes |
+| Pop-up publication record (created only where missing, seeded as below) | no | yes |
+| Project storage (item_type field added, every existing item set to Generic; next-actions store empty) | no | yes |
+| Notes cap 150,000 and the checker instruction text | no | yes |
+| waiting_on limit raised to 5,000 characters | no | yes |
+| Email Brief detail line set to the new wording where an older wording is stored | no | yes |
+| Status remap (waiting, due, decision, personal) | yes | yes |
+| Everything else (presentation and behaviour) | no | no |
+
+- Storage additions, created empty or at their defaults: the per-panel item_sort field (every existing panel starts at the default, A-Z); the due-soon window setting (created at the default, 3 days); the user-only Email Brief checkoff store (created empty); the brief flags store (created empty; its keys follow EMAIL-BRIEF.md section 6, the bullet's Open link when it has one, otherwise its bold lead plus the brief's date); the brief Minimize store (created empty; its keys are the same bullet keys as the Flag's); the brief pop-up publication record (created only where missing, and seeded with the published heading and the acknowledged heading both set to the board's current top brief heading, so no brief already on the board announces itself; the first pop-up comes with the next brief; no brief content is touched); the Project storage (an item_type field added to panel items with every existing item set to Generic, and the next-actions store created empty; no item is converted to Project); and the COACH aphorism set with its rotation position.
+- New actions: setpanelitemsort, setduesoondays, setemailbriefusercheckoff, setbriefflag, setbriefbulletminimized, acknowledgebriefheading, setcoachaphorisms, setcoachposition (SPEC.md section 6, 32 actions in total). The old updatecoachnote action is retired; the stored coach note itself stays as my data.
+- Schema maximums and job text (no data rewrite; my yes is needed because this changes a scheduled job's instructions): the panel-item notes cap rises from 100,000 to 150,000 characters, in the board's limit and in the brief checker's instructions together; and the task waiting_on limit rises from 240 to 5,000 characters (SPEC.md section 2.1).
+- The Email Brief checkoffs fix, applied without rewriting existing data: from the upgrade onward, the Email Brief entry's five session boxes read from the new user-only store, which starts empty, so the boxes start blank and afterwards record only my own clicks. My existing session completion data is left exactly as stored; it is simply no longer read for this entry. Every other entry's checkoffs are untouched, and the checker job's behaviour does not change: it never marked these boxes in its own state, and it still tracks which slots have run in its job state only.
+- Email Brief day selection and detail line: the entry's editor gains seven day checkboxes above the session TIME fields, and the checker runs only on the selected days (EMAIL-BRIEF.md section 2b). An existing entry stores no days, which means Monday to Friday, the schedule it already runs: nothing is migrated and no data is rewritten for this, and the checker reads the stored days from the upgrade onward. The entry's detail line takes its current wording, "May take 5 - 30min. Pop-up will announce it.": if the stored detail still carries an older wording, set it to that wording as part of this step.
+- Status remap (the only data rewrite in this step): the panel-item STATUS dropdown now offers six values (SPEC.md section 3.6). Four stored values from the older list are remapped, matched by dot color so the board looks the same afterwards: waiting to blocked, due to blocked, decision to blocked, personal to routine. First show me the diagnosis: a count of my items carrying each of those four values, and this mapping table. On my explicit yes, apply the remap and show me a before and after census of every status value. If I say no, leave every value untouched: the board's legacy-value rule keeps those items rendering and saving safely, and the self-check reports them as legacy values.
+- COACH: the rotating aphorism set replaces the single coach note at the top of the board. Ask me which set to start with: the kit's starter set of 20 (SPEC.md section 1), my existing coach note as a one-entry set, or lines of my own. Start the rotation at the first entry. My stored coach note is not deleted whatever I choose; it stays in my data and in the step 2 backup.
+- File Saves History FILTER defaults (only where the File Save Log module is installed): as a one-time apply, add .jpeg to the stored unchecked extension set if it is not already there, so the stored selection matches the new default set (.bmp, .exe, .jpg, .jpeg, .json, .md, .png, .ps1, .zip). If no selection was ever stored, leave it absent: the new default set applies as the fallback on its own. The Show count and every other stored selection value stay exactly as they are.
+- Everything else in v0.4.0 is board code and behaviour (two-row panel headers and the Headers toggle, panels opening collapsed on load, the table search and presentation changes, the DATE ADDED column and the Name contains filter, the filter end state, the consolidated view controls, the pill tiers and sizes, the rail hide/show button, the Flag and Minimize bullet controls, the brief-arrival pop-up, the Project item type and its editor, the editor polish, the quick-add form, the light new-entry panes, the 32px buttons, the session chips and time-label display, the Settings dialog's fixed header, the COACH random start, the Add modal dropdowns, the Save changes editor, the FILTER modal behaviour): it arrives with the step 4 code update and needs no data change.
 
 ## 5. Email Brief: merge only if the diagnosis found the old structure
 
@@ -84,4 +110,4 @@ Run the self-check (prompts/self-check-and-repair.md) against the NEW spec and r
 
 ## What could not be verified without a real older install
 
-This flow is UNRUN on a real v0.1.5 board (and on a real v0.2.0 board outside the reference install). Specifically unverified: whether a v0.1.5 install records its kit version anywhere the step 1 diagnosis looks; the exact script name, folder, and scheduled task names a v0.1.5-era generated scanner used, so branch B's detection may need the user's help to recognize it; whether a two-entry-era board stores its brief times in the form the step 5 merge expects; and whether getdashboard on those versions returns every field step 1 reads. The diagnosis reports what it actually finds and stops on anything unrecognized, which is the designed behavior when these assumptions miss.
+This flow is UNRUN on a real v0.1.5 board (and on a real v0.2.0 board outside the reference install). Specifically unverified: whether a v0.1.5 install records its kit version anywhere the step 1 diagnosis looks; the exact script name, folder, and scheduled task names a v0.1.5-era generated scanner used, so branch B's detection may need the user's help to recognize it; whether a two-entry-era board stores its brief times in the form the step 5 merge expects; and whether getdashboard on those versions returns every field step 1 reads. The v0.3.2 to v0.4.0 path (step 4b) is likewise UNRUN on a real v0.3.2 board: whether every v0.3.2 install records its version where the diagnosis looks, and whether the one-time FILTER default apply finds the stored extension selection in the shape it expects, are unverified until a pilot runs it. The diagnosis reports what it actually finds and stops on anything unrecognized, which is the designed behavior when these assumptions miss.
